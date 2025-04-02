@@ -1,0 +1,267 @@
+{
+	"info": {
+		"_postman_id": "166e82fb-a689-4568-a5f7-1419d5c49e4a",
+		"name": "dnt",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39091394"
+	},
+	"item": [
+		{
+			"name": "http://localhost:1337/api/auth/login",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"taa\",\n  \"password\": \"your_password\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:1337/api/auth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "1337",
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:1337/api/auth/register",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"username\": \"taa\",\n  \"password\": \"your_password\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:1337/api/auth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "1337",
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:1337/api/auth/change-password",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"cccd\": \"03543226062\",\r\n  \"current_password\": \"123123\",\r\n  \"new_password\": \"123456\",\r\n  \"confirm_password\": \"123456\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:1337/api/auth/change-password",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "1337",
+					"path": [
+						"api",
+						"auth",
+						"change-password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ttp://localhost:1337/api/system-info/metrics",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:1337/api/system-info/metrics",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "1337",
+					"path": [
+						"api",
+						"system-info",
+						"metrics"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:1337/api/system-info/metrics -POST",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"data\": {\r\n    \"listedValue\": 12345678,\r\n    \"transactions\": 23456789,\r\n    \"accesses\": 12345678,\r\n    \"successfully\": 23456789,\r\n    \"amount\": 12345678,\r\n    \"duration\": 12345679,\r\n    \"latestBank\": \"Example Bank\",\r\n    \"deposited\": 12345678,\r\n    \"videoViews\": 12345678,\r\n    \"withdrawn\": 56789,\r\n    \"members\": 56789,\r\n    \"remaining\": 56789,\r\n    \"online\": 56789,\r\n    \"hasExpiry\": false\r\n  }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:1337/api/system-info/metrics",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "1337",
+					"path": [
+						"api",
+						"system-info",
+						"metrics"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:1337/api/users/me",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjY2NkIjoiMDM1NDMyMjAwMDAiLCJpZCI6MywiaWF0IjoxNzQzNTM1NTU5LCJleHAiOjE3NDQxNDAzNTl9.E23lW_nhMtuyg9vKS5IOUftj8CjVLpIy8paGWSHlahE",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:1337/api/users/me",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "1337",
+					"path": [
+						"api",
+						"users",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:1337/api/auth/update",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjY2NkIjoiMDM1NDMyMjAwMDAiLCJpZCI6MywiaWF0IjoxNzQzNTM1NTU5LCJleHAiOjE3NDQxNDAzNTl9.E23lW_nhMtuyg9vKS5IOUftj8CjVLpIy8paGWSHlahE",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n     \"username\": \"new_username\",\r\n     \"email\": \"new_email@example.com\",\r\n     \"full_name\": \"New Full Name\",\r\n     \"mobile_number\": \"new_mobile_number\",\r\n     \"bank_number\": \"new_bank_number\",\r\n     \"bank_name\": \"new_bank_name\",\r\n     \"address_no\": \"new_address\",\r\n     \"address_on_map\": \"new_map_address\"\r\n   }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:1337/api/auth/update",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "1337",
+					"path": [
+						"api",
+						"auth",
+						"update"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

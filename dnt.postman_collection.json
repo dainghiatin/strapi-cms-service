@@ -47,9 +47,6 @@
 		{
 			"name": "http://localhost:1337/api/auth/register",
 			"request": {
-				"auth": {
-					"type": "noauth"
-				},
 				"method": "POST",
 				"header": [
 					{
@@ -59,7 +56,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"username\": \"taa\",\n  \"password\": \"your_password\"\n}",
+					"raw": "{\n    \"cccd\": \"123456789\",\n    \"password\": \"password123\",\n    \"full_name\": \"John Doe\",\n    \"email\": \"john.doe@example.com\",\n    \"mobile_number\": \"0987654321\",\n    \"bank_number\": \"1234567890\",\n    \"bank_name\": \"Vietcombank\",\n    \"address_no\": \"123 Street\",\n    \"address_on_map\": \"123 Street, District 1, HCM\",\n    \"avt\": \"https://res.cloudinary.com/dnt-cloud/image/upload/v1744299449/chung_chi_tin_hoc_co_ban_6fe1c729d9.jpg\"\n  }",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -67,7 +64,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:1337/api/auth/login",
+					"raw": "http://localhost:1337/api/auth/register",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -76,7 +73,7 @@
 					"path": [
 						"api",
 						"auth",
-						"login"
+						"register"
 					]
 				}
 			},
@@ -183,14 +180,14 @@
 			"response": []
 		},
 		{
-			"name": "http://localhost:1337/api/users/me",
+			"name": "http://localhost:1337/api/auth/me",
 			"request": {
 				"auth": {
 					"type": "bearer",
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjY2NkIjoiMDM1NDMyMjAwMDAiLCJpZCI6MywiaWF0IjoxNzQzNTM1NTU5LCJleHAiOjE3NDQxNDAzNTl9.E23lW_nhMtuyg9vKS5IOUftj8CjVLpIy8paGWSHlahE",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjY2NkIjoiMTIzNDU2Nzg5IiwiaWQiOjMsImlhdCI6MTc0NDMwNTM1OCwiZXhwIjoxNzQ0OTEwMTU4fQ.3oSDfeP_Br_y9wLtiKxgm-7jL53QkZBR_SofeDnqmHU",
 							"type": "string"
 						}
 					]
@@ -203,7 +200,7 @@
 					}
 				],
 				"url": {
-					"raw": "http://localhost:1337/api/users/me",
+					"raw": "http://localhost:1337/api/auth/me",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -211,7 +208,7 @@
 					"port": "1337",
 					"path": [
 						"api",
-						"users",
+						"auth",
 						"me"
 					]
 				}

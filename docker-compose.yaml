@@ -6,7 +6,7 @@ networks:
 
 services:
   strapi:
-    image: jeyluu/strapi-svc-dnt:dev-0.1
+    image: jeyluu/strapi-svc-dnt:dev-0.2
     environment:
       - NODE_ENV=development
       - DATABASE_CLIENT=mysql

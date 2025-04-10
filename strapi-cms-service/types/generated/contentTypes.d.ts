@@ -929,6 +929,7 @@ export interface PluginUsersPermissionsUser
   attributes: {
     address_no: Schema.Attribute.String;
     address_on_map: Schema.Attribute.String;
+    avt: Schema.Attribute.Media<'images'>;
     bank_name: Schema.Attribute.String;
     bank_number: Schema.Attribute.String;
     blocked: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
@@ -945,6 +946,7 @@ export interface PluginUsersPermissionsUser
         minLength: 6;
       }>;
     full_name: Schema.Attribute.String;
+    is_ctv: Schema.Attribute.Boolean;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',

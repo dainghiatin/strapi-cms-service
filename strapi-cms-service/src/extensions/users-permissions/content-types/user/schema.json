@@ -87,6 +87,16 @@
       "type": "string",
       "required": true,
       "unique": true
+    },
+    "is_ctv": {
+      "type": "boolean"
+    },
+    "avt": {
+      "allowedTypes": [
+        "images"
+      ],
+      "type": "media",
+      "multiple": false
     }
   }
 }

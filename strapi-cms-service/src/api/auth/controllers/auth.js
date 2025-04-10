@@ -72,7 +72,8 @@ const register = async (ctx) => {
     bank_number, 
     bank_name, 
     address_no, 
-    address_on_map 
+    address_on_map,
+    avt // This will be the URL of the image
   } = ctx.request.body;
 
   if (!password || !cccd) {
@@ -94,6 +95,23 @@ const register = async (ctx) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Create a file entry for the avatar
+    let avatarFile = null;
+    if (avt) {
+      avatarFile = await strapi.db.query('plugin::upload.file').create({
+        data: {
+          name: `avatar-${Date.now()}`,
+          url: avt,
+          provider: 'cloudinary',
+          mime: 'image/jpeg',
+          size: 0,
+          hash: `avatar-${Date.now()}`,
+          ext: '.jpg',
+          folderPath: '/',
+        },
+      });
+    }
+
     const user = await strapi.db.query('plugin::users-permissions.user').create({
       data: {
         username,
@@ -107,18 +125,31 @@ const register = async (ctx) => {
         bank_name,
         address_no,
         address_on_map,
-        confirmed: true, // or false if you need email confirmation
+        avt: avatarFile ? avatarFile.id : null,
+        confirmed: true,
       },
     });
-
 
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
       expiresIn: '7d',
     });
 
+    // Get the populated user with avatar
+    const populatedUser = await strapi.db.query('plugin::users-permissions.user').findOne({
+      where: { id: user.id },
+      populate: ['avt'],
+    });
+
+    // Remove sensitive information and format avatar URL
+    const { password: _, avt: __, ...userWithoutPassword } = populatedUser;
+    const userWithAvatar = {
+      ...userWithoutPassword,
+      avt: populatedUser.avt ? populatedUser.avt.url : null
+    };
+
     ctx.send({
       jwt: token,
-      user: user,
+      user: userWithAvatar,
     });
 
   } catch (err) {
@@ -185,8 +216,10 @@ const getMe = async (ctx) => {
     // Find user by id from token
     const user = await strapi.db.query('plugin::users-permissions.user').findOne({
       where: { cccd: decoded.cccd },
+      populate: ["avt.url"],
     });
 
+    console.log(user.avt.url);
     if (!user) {
       return ctx.notFound('User not found');
     }
@@ -194,7 +227,14 @@ const getMe = async (ctx) => {
     // Remove sensitive information
     const { password, ...userWithoutPassword } = user;
 
-    return ctx.send(userWithoutPassword);
+    console.log(userWithoutPassword.avt.url);
+
+    const userFinal = {
+      ...userWithoutPassword,
+      avt: userWithoutPassword.avt.url
+    }
+
+    return ctx.send(userFinal);
   } catch (err) {
     if (err.name === 'JsonWebTokenError') {
       return ctx.unauthorized('Invalid token');
@@ -233,22 +273,45 @@ const updateUser = async (ctx) => {
     delete updateData.cccd;
     delete updateData.id;
 
+    // Handle avatar update if provided
+    if (updateData.avt) {
+      // Create a new file entry for the avatar
+      const avatarFile = await strapi.db.query('plugin::upload.file').create({
+        data: {
+          name: `avatar-${Date.now()}`,
+          url: updateData.avt,
+          provider: 'cloudinary',
+          mime: 'image/jpeg',
+          size: 0,
+          hash: `avatar-${Date.now()}`,
+          ext: '.jpg',
+          folderPath: '/',
+        },
+      });
+      updateData.avt = avatarFile.id;
+    }
+
     // Update user
     const updatedUser = await strapi.db.query('plugin::users-permissions.user').update({
       where: { id: user.id },
       data: updateData,
+      populate: ['avt'],
     });
 
-    // Remove password from response
-    const { password, ...userWithoutPassword } = updatedUser;
+    // Remove password and format avatar URL
+    const { password, avt: __, ...userWithoutPassword } = updatedUser;
+    const userWithAvatar = {
+      ...userWithoutPassword,
+      avt: updatedUser.avt ? updatedUser.avt.url : null
+    };
 
-    return ctx.send(userWithoutPassword);
+    return ctx.send(userWithAvatar);
   } catch (err) {
     if (err.name === 'JsonWebTokenError') {
       return ctx.unauthorized('Invalid token');
     }
     console.error("Update User Error:", err);
-    return ctx.internalServerError('An error occurred while updating user details');
+    return ctx.internalServerError('An error occurred while updating user');
   }
 }
 

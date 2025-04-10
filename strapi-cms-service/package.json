@@ -16,8 +16,11 @@
     "upgrade:dry": "npx @strapi/upgrade latest --dry"
   },
   "dependencies": {
+    "@chartbrew/plugin-strapi": "^2.0.1",
     "@strapi/plugin-cloud": "5.11.3",
+    "@strapi/plugin-documentation": "^5.12.3",
     "@strapi/plugin-users-permissions": "5.11.3",
+    "@strapi/provider-upload-cloudinary": "^5.12.4",
     "@strapi/strapi": "5.11.3",
     "fs-extra": "^10.0.0",
     "mime-types": "^2.1.27",
@@ -27,7 +30,6 @@
     "react-router-dom": "^6.0.0",
     "styled-components": "^6.0.0"
   },
-  "devDependencies": {},
   "engines": {
     "node": ">=18.0.0 <=22.x.x",
     "npm": ">=6.0.0"

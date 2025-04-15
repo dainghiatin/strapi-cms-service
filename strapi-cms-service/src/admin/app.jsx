@@ -1,38 +1,134 @@
-import { Button } from '@strapi/design-system';
-import React from 'react';
+import { Button, Flex, Typography, Box } from '@strapi/design-system';
+import React, { useState } from 'react';
 import { unstable_useContentManagerContext as useContentManagerContext } from '@strapi/strapi/admin';
-
+import { useFetchClient } from '@strapi/strapi/admin';
 
 const config = {};
 
-const PreviewButton = () => {
-  const cmContext = useContentManagerContext().form;
-  // You can now access properties like:
-  // cmContext.initialData: The original data of the entry
-  // cmContext.modifiedData: The current data with modifications
-  // cmContext.layout: Information about the content type layout
-  // cmContext.slug: The slug of the content type
+const TransactionActionButtons = () => {
+  const cmContext = useContentManagerContext();
+  const [isAcceptDialogOpen, setIsAcceptDialogOpen] = useState(false);
+  const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [rejectReason, setRejectReason] = useState('');
+  const { get, post, put, del } = useFetchClient();
 
-  console.log('Content Manager Context:', cmContext); // Log context for inspection
+  console.log(cmContext);
+  
+  // Only show for Additional Transaction content type
+  if (cmContext.contentType?.apiID !== 'additional-transaction') {
+    return null;
+  }
 
-  const handleClick = () => {
-    // Example: Get the entry ID and content type slug
-    const entryId = cmContext.initialValues
-    const contentTypeSlug = cmContext.slug;
-    console.log(entryId);
-    
+  // Don't show if status is already DONE or REJECTED
+  const currentStatus = cmContext.form.initialValues?.stt;
+  console.log(cmContext.id);
+  
+  if (currentStatus === 'DONE' || currentStatus === 'REJECTED') {
+    return (
+      <Box padding={4}>
+        <Typography variant="omega">
+          Status: <strong>{currentStatus}</strong>
+        </Typography>
+      </Box>
+    );
+  }
+
+  const handleAccept = async () => {
+    setIsSubmitting(true);
+    try {
+      const handlerName = 'Admin';
+
+      // Get JWT token from sessionStorage
+      const token = sessionStorage.getItem('jwtToken');
+      
+      // Update the transaction status to DONE
+      const response = await put(`/content-manager/collection-types/api::additional-transaction.additional-transaction/${cmContext.id}?`, {
+        data: {
+          stt: 'DONE',
+          handle_by: handlerName,
+        },
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      
+      console.log(response);
+
+      // Refresh the page to show updated data
+      window.location.reload();
+    } catch (error) {
+      console.error('Error accepting transaction:', error);
+      // You can add error notification here
+    } finally {
+      setIsSubmitting(false);
+      setIsAcceptDialogOpen(false);
+    }
+  };
+
+  const handleReject = async () => {
+    setIsSubmitting(true);
+    try {
+      const handlerName = 'Admin';
+      
+      // Get JWT token from sessionStorage
+      const token = sessionStorage.getItem('jwtToken');
+        
+      // Update the transaction status to REJECTED with reason
+      const response = await put(`/content-manager/collection-types/api::additional-transaction.additional-transaction/${cmContext.id}`, {
+        data: {
+          stt: 'REJECTED',
+          reason: rejectReason || 'Rejected by admin',
+          handle_by: handlerName,
+        },
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      
+      console.log(response);
+
+      // Refresh the page to show updated data
+      window.location.reload();
+    } catch (error) {
+      console.error('Error rejecting transaction:', error);
+      // You can add error notification here
+    } finally {
+      setIsSubmitting(false);
+      setIsRejectDialogOpen(false);
+    }
   };
 
   return (
-    <Button onClick={handleClick}>Preview</Button>
+    <>
+      <Flex gap={2}>
+        <Button 
+          onClick={handleAccept} 
+          variant="success"
+          size="S"
+        >
+          ACCEPT
+        </Button>
+        <Button 
+          onClick={handleReject} 
+          variant="danger"
+          size="S"
+        >
+          REJECT
+        </Button>
+      </Flex>
+
+     
+    </>
   );
 };
 
-
 const bootstrap = (app) => {
   app.getPlugin('content-manager').injectComponent('editView', 'right-links', {
-    name: 'PreviewButton',
-    Component: PreviewButton, // Use the updated component
+    name: 'TransactionActionButtons',
+    Component: TransactionActionButtons,
   });
 };
 

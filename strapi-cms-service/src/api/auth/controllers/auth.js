@@ -315,6 +315,39 @@ const updateUser = async (ctx) => {
   }
 }
 
+const searchByCCCD = async (ctx) => {
+  const { cccd } = ctx.request.query;
+
+  if (!cccd) {
+    return ctx.badRequest('CCCD number is required');
+  }
+
+  try {
+    const user = await strapi.db.query('plugin::users-permissions.user').findOne({
+      where: { cccd },
+      populate: ['avt', 'role'],
+    });
+
+    if (!user) {
+      return ctx.notFound('User not found');
+    }
+
+    // Remove sensitive information
+    const { password, resetPasswordToken, confirmationToken, ...userWithoutSensitiveData } = user;
+    
+    // Format avatar URL if exists
+    const formattedUser = {
+      ...userWithoutSensitiveData,
+      avt: user.avt ? user.avt.url : null
+    };
+
+    return ctx.send(formattedUser);
+  } catch (err) {
+    console.error("Search User Error:", err);
+    return ctx.internalServerError('An error occurred while searching for user');
+  }
+}
+
 module.exports = {
-  login, register, changePassword, getMe, updateUser
+  login, register, changePassword, getMe, updateUser, searchByCCCD
 };

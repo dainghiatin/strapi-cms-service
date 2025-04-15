@@ -12,14 +12,14 @@ module.exports = {
       },
     },
     {
-        method: 'POST',
-        path: '/auth/login',
-        handler: 'auth.login',
-        config: {
-          auth: false,
-          policies: [],
-        },
+      method: 'POST',
+      path: '/auth/login',
+      handler: 'auth.login',
+      config: {
+        auth: false,
+        policies: [],
       },
+    },
     {
       method: 'POST',
       path: '/auth/change-password',
@@ -42,6 +42,15 @@ module.exports = {
       method: 'PUT',
       path: '/auth/update',
       handler: 'auth.updateUser',
+      config: {
+        auth: false,
+        policies: [],
+      },
+    },
+    {
+      method: 'GET',
+      path: '/auth/search',
+      handler: 'auth.searchByCCCD',
       config: {
         auth: false,
         policies: [],

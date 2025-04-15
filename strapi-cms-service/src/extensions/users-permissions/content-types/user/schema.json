@@ -92,11 +92,19 @@
       "type": "boolean"
     },
     "avt": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
       "allowedTypes": [
         "images"
-      ],
-      "type": "media",
-      "multiple": false
+      ]
+    },
+    "wallets": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::wallet.wallet",
+      "private": true,
+      "inversedBy": "users"
     }
   }
 }

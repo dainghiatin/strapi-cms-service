@@ -369,6 +369,113 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiAdditionalTransactionAdditionalTransaction
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'additional_transactions';
+  info: {
+    description: '';
+    displayName: 'Additional transaction';
+    pluralName: 'additional-transactions';
+    singularName: 'additional-transaction';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    amount: Schema.Attribute.Decimal &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<0>;
+    bill: Schema.Attribute.Media<'images' | 'files'> &
+      Schema.Attribute.Required;
+    cccd: Schema.Attribute.String & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    full_name: Schema.Attribute.String;
+    handle_by: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::additional-transaction.additional-transaction'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    reason: Schema.Attribute.String;
+    stt: Schema.Attribute.Enumeration<['WAITING', 'DONE', 'REJECTED']> &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'WAITING'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiAuditTrailAuditTrail extends Struct.CollectionTypeSchema {
+  collectionName: 'audit_trails';
+  info: {
+    displayName: 'Audit trails';
+    pluralName: 'audit-trails';
+    singularName: 'audit-trail';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    action_at: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    action_by: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    event: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::audit-trail.audit-trail'
+    > &
+      Schema.Attribute.Private;
+    msg_details: Schema.Attribute.String;
+    product_id: Schema.Attribute.String & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiEventEvent extends Struct.CollectionTypeSchema {
+  collectionName: 'events';
+  info: {
+    displayName: 'events';
+    pluralName: 'events';
+    singularName: 'event';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    content: Schema.Attribute.Media<'files' | 'videos'> &
+      Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::event.event'> &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    thumbnail: Schema.Attribute.Media<'images' | 'files'> &
+      Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiGlobalGlobal extends Struct.SingleTypeSchema {
   collectionName: 'globals';
   info: {
@@ -395,6 +502,174 @@ export interface ApiGlobalGlobal extends Struct.SingleTypeSchema {
     publishedAt: Schema.Attribute.DateTime;
     siteDescription: Schema.Attribute.Text & Schema.Attribute.Required;
     siteName: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiPaymentTransactionPaymentTransaction
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'payment_transactions';
+  info: {
+    description: '';
+    displayName: 'Wallet transaction';
+    pluralName: 'payment-transactions';
+    singularName: 'payment-transaction';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    amount: Schema.Attribute.Decimal &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<0>;
+    comment: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    from_wallet: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'system'>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::payment-transaction.payment-transaction'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    to_wallet: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    wallet_account_type: Schema.Attribute.Enumeration<
+      ['DEFAULT', 'GOODS_ACCOUNT', 'FREELANCER_ACCOUNT', 'AI_LIVE_ACCOUNT']
+    > &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'DEFAULT'>;
+  };
+}
+
+export interface ApiProductDocumentProductDocument
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'product_documents';
+  info: {
+    description: '';
+    displayName: 'Product document';
+    pluralName: 'product-documents';
+    singularName: 'product-document';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    files: Schema.Attribute.Media<'images' | 'files', true> &
+      Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::product-document.product-document'
+    > &
+      Schema.Attribute.Private;
+    product: Schema.Attribute.Relation<'manyToOne', 'api::product.product'>;
+    publishedAt: Schema.Attribute.DateTime;
+    type: Schema.Attribute.Enumeration<
+      ['BBBG', 'CONTRACT_WITH_SYSTEM', 'ORTHERS']
+    >;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiProductProduct extends Struct.CollectionTypeSchema {
+  collectionName: 'products';
+  info: {
+    description: '';
+    displayName: 'Product';
+    pluralName: 'products';
+    singularName: 'product';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    actual_price: Schema.Attribute.Decimal &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<0>;
+    buy_user: Schema.Attribute.String;
+    buyer_actions: Schema.Attribute.Enumeration<
+      [
+        'AWAITING',
+        'RECEIPT AND PAYMENT',
+        'RETURNS GOODS TAKE DEPOSIT',
+        'CLOSED',
+      ]
+    >;
+    category: Schema.Attribute.String;
+    confirmed: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    create_user: Schema.Attribute.String & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    deposit_price: Schema.Attribute.Decimal &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<0>;
+    images: Schema.Attribute.Media<'images' | 'files' | 'videos', true>;
+    init_price: Schema.Attribute.Decimal &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<0>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::product.product'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    payment_transaction_id: Schema.Attribute.String;
+    product_documents: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::product-document.product-document'
+    >;
+    publishedAt: Schema.Attribute.DateTime;
+    reason: Schema.Attribute.Text;
+    regions: Schema.Attribute.String;
+    seller_actions: Schema.Attribute.Enumeration<
+      [
+        'OPENED',
+        'AWAITING CONFIRM',
+        'CONFIRMED',
+        'DELIVERY AND PAYMENT',
+        'RECEIVE GOODS AND LOST DEPOSIT',
+        'CLOSED',
+      ]
+    > &
+      Schema.Attribute.DefaultTo<'OPENED'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -467,6 +742,123 @@ export interface ApiSystemInfoSystemInfo extends Struct.SingleTypeSchema {
     withdrawn: Schema.Attribute.BigInteger &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<0>;
+  };
+}
+
+export interface ApiWalletWallet extends Struct.CollectionTypeSchema {
+  collectionName: 'wallets';
+  info: {
+    description: '';
+    displayName: 'Wallet';
+    pluralName: 'wallets';
+    singularName: 'wallet';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    account_of_ailive: Schema.Attribute.Decimal &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<0>;
+    account_of_freelancer: Schema.Attribute.Decimal &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<0>;
+    account_of_goods: Schema.Attribute.Decimal &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<0>;
+    cccd: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::wallet.wallet'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String;
+    pending_amount: Schema.Attribute.Decimal &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<0>;
+    publishedAt: Schema.Attribute.DateTime;
+    total: Schema.Attribute.Decimal &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<0>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    user: Schema.Attribute.String & Schema.Attribute.Required;
+    user_id: Schema.Attribute.BigInteger &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    users: Schema.Attribute.Relation<
+      'manyToMany',
+      'plugin::users-permissions.user'
+    >;
+  };
+}
+
+export interface ApiWithDrawthTransactionWithDrawthTransaction
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'with_drawth_transactions';
+  info: {
+    displayName: 'With drawth transaction';
+    pluralName: 'with-drawth-transactions';
+    singularName: 'with-drawth-transaction';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    amount: Schema.Attribute.Decimal;
+    bill: Schema.Attribute.Media<'images' | 'files', true>;
+    cccd: Schema.Attribute.String & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    full_name: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::with-drawth-transaction.with-drawth-transaction'
+    > &
+      Schema.Attribute.Private;
+    note: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
   };
 }
 
@@ -971,6 +1363,8 @@ export interface PluginUsersPermissionsUser
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     username: Schema.Attribute.String;
+    wallets: Schema.Attribute.Relation<'manyToMany', 'api::wallet.wallet'> &
+      Schema.Attribute.Private;
   };
 }
 
@@ -984,8 +1378,16 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
+      'api::additional-transaction.additional-transaction': ApiAdditionalTransactionAdditionalTransaction;
+      'api::audit-trail.audit-trail': ApiAuditTrailAuditTrail;
+      'api::event.event': ApiEventEvent;
       'api::global.global': ApiGlobalGlobal;
+      'api::payment-transaction.payment-transaction': ApiPaymentTransactionPaymentTransaction;
+      'api::product-document.product-document': ApiProductDocumentProductDocument;
+      'api::product.product': ApiProductProduct;
       'api::system-info.system-info': ApiSystemInfoSystemInfo;
+      'api::wallet.wallet': ApiWalletWallet;
+      'api::with-drawth-transaction.with-drawth-transaction': ApiWithDrawthTransactionWithDrawthTransaction;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;

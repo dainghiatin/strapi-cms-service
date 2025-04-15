@@ -1,0 +1,97 @@
+{
+  "kind": "collectionType",
+  "collectionName": "products",
+  "info": {
+    "singularName": "product",
+    "pluralName": "products",
+    "displayName": "Product",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "init_price": {
+      "type": "decimal",
+      "required": true,
+      "default": 0,
+      "min": 0
+    },
+    "create_user": {
+      "type": "string",
+      "required": true
+    },
+    "actual_price": {
+      "type": "decimal",
+      "default": 0,
+      "required": false,
+      "min": 0
+    },
+    "deposit_price": {
+      "type": "decimal",
+      "required": false,
+      "default": 0,
+      "min": 0
+    },
+    "reason": {
+      "type": "text"
+    },
+    "seller_actions": {
+      "type": "enumeration",
+      "enum": [
+        "OPENED",
+        "AWAITING CONFIRM",
+        "CONFIRMED",
+        "DELIVERY AND PAYMENT",
+        "RECEIVE GOODS AND LOST DEPOSIT",
+        "CLOSED"
+      ],
+      "default": "OPENED"
+    },
+    "confirmed": {
+      "type": "boolean",
+      "default": false
+    },
+    "category": {
+      "type": "string"
+    },
+    "regions": {
+      "type": "string"
+    },
+    "images": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos"
+      ]
+    },
+    "buy_user": {
+      "type": "string"
+    },
+    "payment_transaction_id": {
+      "type": "string"
+    },
+    "product_documents": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::product-document.product-document",
+      "mappedBy": "product"
+    },
+    "buyer_actions": {
+      "type": "enumeration",
+      "enum": [
+        "AWAITING",
+        "RECEIPT AND PAYMENT",
+        "RETURNS GOODS TAKE DEPOSIT",
+        "CLOSED"
+      ]
+    }
+  }
+}

@@ -1,28 +1,33 @@
 import { Button, Flex, Typography, Box } from '@strapi/design-system';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { unstable_useContentManagerContext as useContentManagerContext } from '@strapi/strapi/admin';
 import { useFetchClient } from '@strapi/strapi/admin';
+import { useAuth } from '@strapi/strapi/admin';
+
+
 
 const config = {};
 
 const TransactionActionButtons = () => {
   const cmContext = useContentManagerContext();
+  const { user } = useAuth('UserManagement', (state) => ({
+    user: state.user,
+  }));
   const [isAcceptDialogOpen, setIsAcceptDialogOpen] = useState(false);
   const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
-  const { get, post, put, del } = useFetchClient();
-
-  console.log(cmContext);
+  const { put } = useFetchClient();
   
+  const aptOrRejCollection = ["additional-transaction", "with-drawth-transaction"]
   // Only show for Additional Transaction content type
-  if (cmContext.contentType?.apiID !== 'additional-transaction') {
+  if (!aptOrRejCollection.includes(cmContext.contentType?.apiID)) {
     return null;
   }
-
+  console.log(cmContext);
   // Don't show if status is already DONE or REJECTED
   const currentStatus = cmContext.form.initialValues?.stt;
-  console.log(cmContext.id);
+  console.log(user);
   
   if (currentStatus === 'DONE' || currentStatus === 'REJECTED') {
     return (
@@ -37,30 +42,17 @@ const TransactionActionButtons = () => {
   const handleAccept = async () => {
     setIsSubmitting(true);
     try {
-      const handlerName = 'Admin';
-
-      // Get JWT token from sessionStorage
-      const token = sessionStorage.getItem('jwtToken');
-      
-      // Update the transaction status to DONE
-      const response = await put(`/content-manager/collection-types/api::additional-transaction.additional-transaction/${cmContext.id}?`, {
-        data: {
+      const handlerName = user?.firstname || 'Admin'; // <-- Use current admin username
+      const response = await put(
+        `/content-manager/collection-types/${cmContext.slug}/${cmContext.id}`,
+        {
           stt: 'DONE',
           handle_by: handlerName,
-        },
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      
+        }
+      );
       console.log(response);
-
-      // Refresh the page to show updated data
-      window.location.reload();
     } catch (error) {
       console.error('Error accepting transaction:', error);
-      // You can add error notification here
     } finally {
       setIsSubmitting(false);
       setIsAcceptDialogOpen(false);
@@ -70,31 +62,21 @@ const TransactionActionButtons = () => {
   const handleReject = async () => {
     setIsSubmitting(true);
     try {
-      const handlerName = 'Admin';
-      
-      // Get JWT token from sessionStorage
-      const token = sessionStorage.getItem('jwtToken');
-        
-      // Update the transaction status to REJECTED with reason
-      const response = await put(`/content-manager/collection-types/api::additional-transaction.additional-transaction/${cmContext.id}`, {
-        data: {
-          stt: 'REJECTED',
-          reason: rejectReason || 'Rejected by admin',
-          handle_by: handlerName,
-        },
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      
+      const handlerName = user?.firstname || 'Admin'; // <-- Use current admin username
+      const response = await put(
+        `/content-manager/collection-types/${cmContext.slug}/${cmContext.id}`,
+        {
+          data: {
+            stt: 'REJECTED',
+            reason: rejectReason || 'Rejected by admin',
+            handle_by: handlerName,
+          },
+        }
+      );
       console.log(response);
-
-      // Refresh the page to show updated data
       window.location.reload();
     } catch (error) {
       console.error('Error rejecting transaction:', error);
-      // You can add error notification here
     } finally {
       setIsSubmitting(false);
       setIsRejectDialogOpen(false);

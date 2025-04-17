@@ -818,14 +818,9 @@ export interface ApiWalletWallet extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    user: Schema.Attribute.String & Schema.Attribute.Required;
     user_id: Schema.Attribute.BigInteger &
       Schema.Attribute.Required &
       Schema.Attribute.Unique;
-    users: Schema.Attribute.Relation<
-      'manyToMany',
-      'plugin::users-permissions.user'
-    >;
   };
 }
 
@@ -833,6 +828,7 @@ export interface ApiWithDrawthTransactionWithDrawthTransaction
   extends Struct.CollectionTypeSchema {
   collectionName: 'with_drawth_transactions';
   info: {
+    description: '';
     displayName: 'With drawth transaction';
     pluralName: 'with-drawth-transactions';
     singularName: 'with-drawth-transaction';
@@ -848,6 +844,7 @@ export interface ApiWithDrawthTransactionWithDrawthTransaction
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     full_name: Schema.Attribute.String;
+    handle_by: Schema.Attribute.String;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -856,6 +853,7 @@ export interface ApiWithDrawthTransactionWithDrawthTransaction
       Schema.Attribute.Private;
     note: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
+    stt: Schema.Attribute.Enumeration<['WAITING', 'DONE', 'REJECTED']>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1363,8 +1361,6 @@ export interface PluginUsersPermissionsUser
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     username: Schema.Attribute.String;
-    wallets: Schema.Attribute.Relation<'manyToMany', 'api::wallet.wallet'> &
-      Schema.Attribute.Private;
   };
 }
 

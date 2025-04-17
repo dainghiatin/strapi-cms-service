@@ -48,20 +48,10 @@
       "required": true,
       "unique": true
     },
-    "user": {
-      "type": "string",
-      "required": true
-    },
     "pending_amount": {
       "type": "decimal",
       "default": 0,
       "min": 0
-    },
-    "users": {
-      "type": "relation",
-      "relation": "manyToMany",
-      "target": "plugin::users-permissions.user",
-      "mappedBy": "wallets"
     }
   }
 }

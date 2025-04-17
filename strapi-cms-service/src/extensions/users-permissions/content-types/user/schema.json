@@ -98,13 +98,6 @@
       "allowedTypes": [
         "images"
       ]
-    },
-    "wallets": {
-      "type": "relation",
-      "relation": "manyToMany",
-      "target": "api::wallet.wallet",
-      "private": true,
-      "inversedBy": "users"
     }
   }
 }

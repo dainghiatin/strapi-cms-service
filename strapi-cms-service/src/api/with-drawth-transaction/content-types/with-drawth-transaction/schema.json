@@ -4,7 +4,8 @@
   "info": {
     "singularName": "with-drawth-transaction",
     "pluralName": "with-drawth-transactions",
-    "displayName": "With drawth transaction"
+    "displayName": "With drawth transaction",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
@@ -21,15 +22,26 @@
       "type": "decimal"
     },
     "bill": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
       "allowedTypes": [
         "images",
         "files"
-      ],
-      "type": "media",
-      "multiple": true,
-      "required": false
+      ]
     },
     "note": {
+      "type": "string"
+    },
+    "stt": {
+      "type": "enumeration",
+      "enum": [
+        "WAITING",
+        "DONE",
+        "REJECTED"
+      ]
+    },
+    "handle_by": {
       "type": "string"
     }
   }

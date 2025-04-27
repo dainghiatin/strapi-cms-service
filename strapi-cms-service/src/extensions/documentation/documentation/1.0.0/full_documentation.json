@@ -2,8 +2,8 @@
   "openapi": "3.0.0",
   "info": {
     "version": "1.0.0",
-    "title": "DOCUMENTATION",
-    "description": "",
+    "title": "API Documentation",
+    "description": "API documentation for your Strapi project",
     "termsOfService": "YOUR_TERMS_OF_SERVICE_URL",
     "contact": {
       "name": "TEAM",
@@ -14,8 +14,13 @@
       "name": "Apache 2.0",
       "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "x-generation-date": "2025-04-17T19:21:21.555Z"
+    "x-generation-date": "2025-04-27T04:43:07.866Z"
   },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
   "x-strapi-config": {
     "plugins": [
       "upload",
@@ -32,11 +37,6 @@
     "description": "Find out more",
     "url": "https://docs.strapi.io/developer-docs/latest/getting-started/introduction.html"
   },
-  "security": [
-    {
-      "bearerAuth": []
-    }
-  ],
   "paths": {
     "/additional-transactions": {
       "get": {

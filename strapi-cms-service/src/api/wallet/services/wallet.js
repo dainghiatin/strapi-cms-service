@@ -4,6 +4,7 @@
  * wallet service
  */
 
+// @ts-ignore
 const { createCoreService } = require('@strapi/strapi').factories;
 // const jwt = require('jsonwebtoken'); // No longer needed here
 const { getUserFromToken } = require('../../../common/services/auth-utils'); // Corrected path again

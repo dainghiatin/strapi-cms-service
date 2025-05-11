@@ -1,10 +1,10 @@
 'use strict';
 
+const { createCoreRouter } = require('@strapi/strapi').factories;
+
 /**
  * wallet router
  */
-
-// const { createCoreRouter } = require('@strapi/strapi').factories; // Not used if defining custom routes only
 
 module.exports = {
   routes: [
@@ -41,9 +41,16 @@ module.exports = {
         policies: [],
       },
     },
-    // If you need the default core routes (find, findOne, create, update, delete) 
-    // you would typically import and spread them, or define them manually.
-    // Example of adding core routes:
-    // ...createCoreRouter('api::wallet.wallet').routes,
+    {
+      method: 'GET',
+      path: '/wallets/my-wallet',
+      handler: 'wallet.getWalletByJwt',
+      config: {
+        auth: {
+          strategy: 'jwt'
+        },
+        policies: [],
+      },
+    }
   ],
 };

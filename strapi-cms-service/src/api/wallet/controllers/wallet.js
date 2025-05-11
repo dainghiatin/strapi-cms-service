@@ -4,6 +4,7 @@
  * wallet controller
  */
 
+// @ts-ignore
 const { createCoreController } = require('@strapi/strapi').factories;
 
 const getFavoriteWallets = async (ctx) => {
@@ -78,8 +79,37 @@ const transferToInternalAccount = async (ctx) => {
   }
 };
 
+const getWalletByJwt = async (ctx) => {
+  try {
+    // Extract token from header
+    const token = ctx.request.header.authorization?.split(' ')[1];
+    if (!token) {
+      return ctx.unauthorized('No token provided.');
+    }
+    
+    // Use the existing getWalletFromToken service method
+    const wallet = await strapi.service('api::wallet.wallet').getWalletFromToken(token);
+    return ctx.send(wallet);
+  } catch (error) {
+    // Handle specific errors
+    if (error.message === 'Invalid token') {
+      return ctx.unauthorized(error.message);
+    }
+    if (error.message === 'User not found') {
+      return ctx.notFound(error.message);
+    }
+    if (error.message === 'User does not have a wallet') {
+      return ctx.notFound(error.message);
+    }
+    
+    console.error("Get Wallet By JWT Error:", error);
+    return ctx.internalServerError('An error occurred while fetching wallet information');
+  }
+};
+
 module.exports = {
   getFavoriteWallets,
   transferBetweenWallets,
-  transferToInternalAccount
+  transferToInternalAccount,
+  getWalletByJwt
 };

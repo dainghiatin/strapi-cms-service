@@ -6,7 +6,12 @@ import { useAuth } from '@strapi/strapi/admin';
 
 
 
-const config = {};
+const config = {
+  locales: [
+    'en',
+    'vi'
+  ],
+};
 
 const TransactionActionButtons = () => {
   const cmContext = useContentManagerContext();
@@ -51,6 +56,7 @@ const TransactionActionButtons = () => {
         }
       );
       console.log(response);
+      window.location.reload();
     } catch (error) {
       console.error('Error accepting transaction:', error);
     } finally {
@@ -66,11 +72,9 @@ const TransactionActionButtons = () => {
       const response = await put(
         `/content-manager/collection-types/${cmContext.slug}/${cmContext.id}`,
         {
-          data: {
-            stt: 'REJECTED',
-            reason: rejectReason || 'Rejected by admin',
-            handle_by: handlerName,
-          },
+          stt: 'REJECTED',
+          reason: rejectReason || 'Rejected by admin',
+          handle_by: handlerName,
         }
       );
       console.log(response);

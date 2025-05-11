@@ -4,29 +4,30 @@
   "info": {
     "singularName": "event",
     "pluralName": "events",
-    "displayName": "events"
+    "displayName": "Events",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
   },
   "attributes": {
     "thumbnail": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
       "allowedTypes": [
         "images",
         "files"
-      ],
-      "type": "media",
-      "multiple": false,
-      "required": true
+      ]
     },
     "content": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
       "allowedTypes": [
         "files",
         "videos"
-      ],
-      "type": "media",
-      "multiple": false,
-      "required": true
+      ]
     }
   }
 }

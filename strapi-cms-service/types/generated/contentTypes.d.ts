@@ -407,7 +407,9 @@ export interface ApiAdditionalTransactionAdditionalTransaction
       Schema.Attribute.Private;
     publishedAt: Schema.Attribute.DateTime;
     reason: Schema.Attribute.String;
-    stt: Schema.Attribute.Enumeration<['WAITING', 'DONE', 'REJECTED']> &
+    stt: Schema.Attribute.Enumeration<
+      ['WAITING', 'DONE', 'REJECTED', 'APPROVED_BY_AUTOMATION']
+    > &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<'WAITING'>;
     updatedAt: Schema.Attribute.DateTime;
@@ -451,7 +453,8 @@ export interface ApiAuditTrailAuditTrail extends Struct.CollectionTypeSchema {
 export interface ApiEventEvent extends Struct.CollectionTypeSchema {
   collectionName: 'events';
   info: {
-    displayName: 'events';
+    description: '';
+    displayName: 'Events';
     pluralName: 'events';
     singularName: 'event';
   };
@@ -673,6 +676,52 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+  };
+}
+
+export interface ApiSystemConfigurationSystemConfiguration
+  extends Struct.SingleTypeSchema {
+  collectionName: 'system_configurations';
+  info: {
+    description: '';
+    displayName: 'System Configuration';
+    pluralName: 'system-configurations';
+    singularName: 'system-configuration';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::system-configuration.system-configuration'
+    >;
+    publishedAt: Schema.Attribute.DateTime;
+    transactionApproveMode: Schema.Attribute.Enumeration<
+      ['auto mode', 'manual mode']
+    > &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<'manual mode'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    userApproveMode: Schema.Attribute.Enumeration<
+      ['auto mode', 'manual mode']
+    > &
+      Schema.Attribute.DefaultTo<'auto mode'>;
   };
 }
 
@@ -1381,6 +1430,7 @@ declare module '@strapi/strapi' {
       'api::payment-transaction.payment-transaction': ApiPaymentTransactionPaymentTransaction;
       'api::product-document.product-document': ApiProductDocumentProductDocument;
       'api::product.product': ApiProductProduct;
+      'api::system-configuration.system-configuration': ApiSystemConfigurationSystemConfiguration;
       'api::system-info.system-info': ApiSystemInfoSystemInfo;
       'api::wallet.wallet': ApiWalletWallet;
       'api::with-drawth-transaction.with-drawth-transaction': ApiWithDrawthTransactionWithDrawthTransaction;

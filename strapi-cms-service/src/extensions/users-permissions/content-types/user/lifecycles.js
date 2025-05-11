@@ -1,6 +1,7 @@
 'use strict';
 
 const { errors } = require('@strapi/utils');
+const { getUserApproveMode } = require('../../../../common/services/system-config');
 const { ApplicationError } = errors;
 
 /**
@@ -12,13 +13,12 @@ const beforeCreate = async (event) => {
   const { data } = event.params;
   const { amount, cccd } = data;
 
-  const systemConfig = await strapi.entityService.findOne('api::system-configuration.system-configuration',1);
-  const transactionApproveMode = systemConfig?.transactionApproveMode || 'manual mode'; // Default to manual mode if not set
+  const userApproveMode = await getUserApproveMode(); // Default to manual mode if not set
 
-  if (transactionApproveMode === 'manual mode') {
-    data.stt = 'PENDING';
+  if (userApproveMode === 'auto mode') {
+    data.confirmed = true;
   } else {
-    data.stt = 'APPROVED_BY_AUTOMATION'; 
+    data.confirmed = false;
   }
 }
 

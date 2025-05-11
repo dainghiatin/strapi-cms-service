@@ -5,6 +5,7 @@
 const { sanitize } = require('@strapi/utils');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { getUserApproveMode } = require('../../../common/services/system-config');
 
 const login = async (ctx) => {
   const { cccd, password } = ctx.request.body;
@@ -112,6 +113,8 @@ const register = async (ctx) => {
       });
     }
 
+    const userApproveMode = await getUserApproveMode(); // Get the current transaction approve mode
+
     const user = await strapi.db.query('plugin::users-permissions.user').create({
       data: {
         username,
@@ -126,7 +129,7 @@ const register = async (ctx) => {
         address_no,
         address_on_map,
         avt: avatarFile ? avatarFile.id : null,
-        confirmed: true,
+        confirmed: userApproveMode === 'manual mode'? false : true,
       },
     });
 

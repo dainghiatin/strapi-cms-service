@@ -50,7 +50,8 @@
       "enum": [
         "WAITING",
         "DONE",
-        "REJECTED"
+        "REJECTED",
+        "APPROVED_BY_AUTOMATION"
       ],
       "default": "WAITING",
       "required": true,

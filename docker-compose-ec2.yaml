@@ -1,0 +1,58 @@
+
+# networks:
+#   app-tier:
+#     driver: bridge
+
+services:
+  strapi:
+    image: jeyluu/strapi-svc-dnt:release-0.1
+    environment:
+      - NODE_ENV=production
+      - DATABASE_CLIENT=mysql
+      - DATABASE_HOST=strapi.c4t2yi8mor6k.us-east-1.rds.amazonaws.com
+      - DATABASE_PORT=3306
+      - DATABASE_NAME=strapi
+      - DATABASE_USERNAME=admin
+      - DATABASE_PASSWORD=Tuitenta444
+      - JWT_SECRET=your-super-secret-key
+      - ADMIN_JWT_SECRET=your-super-secret-key
+      - TRANSFER_TOKEN_SALT=your-super-secret-key
+      - APP_KEYS=your-super-secret-key
+      - CLOUDINARY_NAME=dnt-cloud
+      - CLOUDINARY_KEY=734211622641529
+      - CLOUDINARY_SECRET=wgHEUdibkkucRSG9Tc5qcvtdRvc
+      - CLOUDINARY_FOLDER=strapi-uploads
+    ports:
+      - "1337:1337"  # Comment out direct port exposure
+    # expose:
+    #   - "1337"  # Expose to other containers but not to host
+    restart: always
+    # depends_on:
+    #   mysql:
+    #     condition: service_healthy
+
+  nginx:
+    image: jeyluu/nginx:dev-0.5.1
+    ports:
+      - "80:80"
+    depends_on:
+      - strapi
+    restart: always
+
+  # mysql:
+  #   image: 'bitnami/mysql:latest'
+  #   environment:
+  #     - ALLOW_EMPTY_PASSWORD=yes
+  #     - MYSQL_DATABASE=strapi
+  #   ports:
+  #     - "3306:3306"  # Forward MySQL port to localhost
+  #   volumes:
+  #     - mysql_data:/bitnami/mysql/data
+  #   healthcheck:
+  #     test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+
+volumes:
+  mysql_data:

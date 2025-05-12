@@ -5,7 +5,7 @@ FROM node:18-alpine
 WORKDIR /app
 
 # Define build arguments
-ARG NODE_ENV=development
+ARG NODE_ENV=production
 ARG DATABASE_CLIENT=mysql
 ARG DATABASE_HOST=mysql
 ARG DATABASE_PORT=3306

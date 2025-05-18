@@ -15,38 +15,36 @@ const login = async (ctx) => {
   }
   console.log(ctx.request.body);
 
-  let existingUsers = await strapi.entityService.findMany('plugin::users-permissions.user', {
-    filters: {
-      cccd: {
-        $eqi: cccd,
-      },
-    },
+  const existingUser = await strapi.db.query('plugin::users-permissions.user').findOne({
+    // @ts-ignore
+    where: { cccd: cccd },
+    populate: ["avt.url"],
   });
 
 
 
 
-  if (existingUsers.length <= 0) {
+  if (existingUser == null) {
     return ctx.unauthorized('Invalid credentials');
   }
 
   const validPassword = await verifyPassword(
     password,
-    existingUsers[0].password
+    existingUser.password
   );
 
   if (!validPassword) {
     return ctx.unauthorized('Invalid credentials');
   }
 
-  console.log(existingUsers);
+  console.log(existingUser);
 
 
-  const token = jwt.sign({ cccd: existingUsers[0].cccd, id: existingUsers[0].id }, process.env.JWT_SECRET, {
+  const token = jwt.sign({ cccd: existingUser.cccd, id: existingUser.id }, process.env.JWT_SECRET, {
     expiresIn: '7d',
   });
 
-  return ctx.send({ token, user: existingUsers[0] });
+  return ctx.send({ token, user: existingUser });
 
 
 }
@@ -218,11 +216,12 @@ const getMe = async (ctx) => {
     console.log(decoded);
     // Find user by id from token
     const user = await strapi.db.query('plugin::users-permissions.user').findOne({
+      // @ts-ignore
       where: { cccd: decoded.cccd },
       populate: ["avt.url"],
     });
+    console.log(user);
 
-    console.log(user.avt.url);
     if (!user) {
       return ctx.notFound('User not found');
     }
@@ -230,11 +229,9 @@ const getMe = async (ctx) => {
     // Remove sensitive information
     const { password, ...userWithoutPassword } = user;
 
-    console.log(userWithoutPassword.avt.url);
-
     const userFinal = {
       ...userWithoutPassword,
-      avt: userWithoutPassword.avt.url
+      avt: userWithoutPassword.avt?.url
     }
 
     return ctx.send(userFinal);
@@ -261,6 +258,7 @@ const updateUser = async (ctx) => {
     
     // Find user by CCCD from token
     const user = await strapi.db.query('plugin::users-permissions.user').findOne({
+      // @ts-ignore
       where: { cccd: decoded.cccd },
     });
 

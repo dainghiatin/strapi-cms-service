@@ -737,60 +737,34 @@ export interface ApiSystemInfoSystemInfo extends Struct.SingleTypeSchema {
     draftAndPublish: false;
   };
   attributes: {
-    accesses: Schema.Attribute.BigInteger &
-      Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<0>;
-    amount: Schema.Attribute.BigInteger &
-      Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<0>;
+    accesses: Schema.Attribute.BigInteger & Schema.Attribute.DefaultTo<0>;
+    amount: Schema.Attribute.BigInteger & Schema.Attribute.DefaultTo<0>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    deposited: Schema.Attribute.BigInteger &
-      Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<0>;
-    duration: Schema.Attribute.BigInteger &
-      Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<0>;
-    hasExpiry: Schema.Attribute.Boolean &
-      Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<false>;
-    lastUpdated: Schema.Attribute.DateTime & Schema.Attribute.Required;
-    latestBank: Schema.Attribute.String & Schema.Attribute.Required;
-    listedValue: Schema.Attribute.BigInteger &
-      Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<0>;
+    deposited: Schema.Attribute.BigInteger & Schema.Attribute.DefaultTo<0>;
+    duration: Schema.Attribute.BigInteger & Schema.Attribute.DefaultTo<0>;
+    hasExpiry: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    lastUpdated: Schema.Attribute.DateTime;
+    latestBank: Schema.Attribute.String;
+    listedValue: Schema.Attribute.BigInteger & Schema.Attribute.DefaultTo<0>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::system-info.system-info'
     > &
       Schema.Attribute.Private;
-    members: Schema.Attribute.Integer &
-      Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<0>;
-    online: Schema.Attribute.Integer &
-      Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<0>;
+    members: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    online: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     publishedAt: Schema.Attribute.DateTime;
-    remaining: Schema.Attribute.BigInteger &
-      Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<0>;
-    successfully: Schema.Attribute.BigInteger &
-      Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<0>;
-    transactions: Schema.Attribute.BigInteger &
-      Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<0>;
+    remaining: Schema.Attribute.BigInteger & Schema.Attribute.DefaultTo<0>;
+    successfully: Schema.Attribute.BigInteger & Schema.Attribute.DefaultTo<0>;
+    transactions: Schema.Attribute.BigInteger & Schema.Attribute.DefaultTo<0>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    videoViews: Schema.Attribute.BigInteger &
-      Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<0>;
-    withdrawn: Schema.Attribute.BigInteger &
-      Schema.Attribute.Required &
-      Schema.Attribute.DefaultTo<0>;
+    videoViews: Schema.Attribute.BigInteger & Schema.Attribute.DefaultTo<0>;
+    withdrawn: Schema.Attribute.BigInteger & Schema.Attribute.DefaultTo<0>;
   };
 }
 
@@ -867,6 +841,10 @@ export interface ApiWalletWallet extends Struct.CollectionTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    user: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >;
     user_id: Schema.Attribute.BigInteger &
       Schema.Attribute.Required &
       Schema.Attribute.Unique;
@@ -1384,6 +1362,10 @@ export interface PluginUsersPermissionsUser
       Schema.Attribute.SetMinMaxLength<{
         minLength: 6;
       }>;
+    favorite_wallets: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::wallet.wallet'
+    >;
     full_name: Schema.Attribute.String;
     is_ctv: Schema.Attribute.Boolean;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
@@ -1410,6 +1392,7 @@ export interface PluginUsersPermissionsUser
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     username: Schema.Attribute.String;
+    wallet: Schema.Attribute.Relation<'oneToOne', 'api::wallet.wallet'>;
   };
 }
 

@@ -40,7 +40,6 @@ module.exports = createCoreService('api::wallet.wallet', ({ strapi }) => ({
     try {
       // Use the common function to get the user directly from the token
       const user = await getUserFromToken(token, strapi);
-
       // User object already has wallet populated by getUserFromPayload
       if (!user.wallet) {
         throw new Error('User does not have a wallet'); // Keep this specific check

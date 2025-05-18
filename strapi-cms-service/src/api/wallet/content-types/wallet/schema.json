@@ -52,6 +52,12 @@
       "type": "decimal",
       "default": 0,
       "min": 0
+    },
+    "user": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "favorite_wallets"
     }
   }
 }

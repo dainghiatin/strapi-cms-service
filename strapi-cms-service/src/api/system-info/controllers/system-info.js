@@ -7,7 +7,7 @@
 const getMetrics = async (ctx) => {
 
     try {
-        const metrics = await strapi.db.query('api::system-info.system-info').findOne({
+        const metricsResults = await strapi.db.query('api::system-info.system-info').findMany({
             select: [
                 'listedValue',
                 'transactions',
@@ -25,8 +25,10 @@ const getMetrics = async (ctx) => {
                 'hasExpiry',
                 'lastUpdated'
             ],
-            where: { id: 1 }
+            limit: 1
         });
+
+        const metrics = metricsResults[0] || null;
 
         return {
             data: metrics
@@ -55,9 +57,11 @@ const updateMetrics = async (ctx) => {
             hasExpiry
         } = ctx.request.body.data;
 
-        const existingMetrics = await strapi.db.query('api::system-info.system-info').findOne({
-            where: { id: 1 }
+        const existingMetricsResults = await strapi.db.query('api::system-info.system-info').findMany({
+            limit: 1
         }); 
+        
+        const existingMetrics = existingMetricsResults[0];
 
         const data = {
             listedValue: listedValue || existingMetrics?.listedValue,
@@ -80,7 +84,7 @@ const updateMetrics = async (ctx) => {
         let metrics;
         if (existingMetrics) {
             metrics = await strapi.db.query('api::system-info.system-info').update({
-                where: { id: 1 },
+                where: { id: existingMetrics.id },
                 data
             }); 
         } else {

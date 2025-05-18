@@ -10,9 +10,7 @@ module.exports = {
       path: '/wallets/favorite-wallets', // Use plural form
       handler: 'custom-wallet.getFavoriteWallets',
       config: {
-        auth: { // Simplified auth config
-          strategy: 'jwt'
-        },
+        auth: false,
         policies: [], // Add policies if needed, e.g., ['global::is-authenticated']
       },
     },
@@ -21,9 +19,7 @@ module.exports = {
       path: '/wallets/transfer', // Use plural form
       handler: 'custom-wallet.transferBetweenWallets',
       config: {
-        auth: { // Simplified auth config
-          strategy: 'jwt'
-        },
+        auth: false,
         policies: [],
       },
     },
@@ -43,9 +39,7 @@ module.exports = {
       path: '/wallets/my-wallet',
       handler: 'custom-wallet.getWalletByJwt',
       config: {
-        auth: {
-          strategy: 'jwt'
-        },
+        auth: false,
         policies: [],
       },
     }

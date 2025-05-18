@@ -18,8 +18,8 @@ module.exports = [
   {
     name: 'strapi::cors',
     config: {
-      enabled: true,
-      origin: ['*'],
+      enabled: false,
+      origin: ['http://localhost:5173', 'http://localhost', 'http://ec2-52-91-99-45.compute-1.amazonaws.com'],
       headers: ['*'],
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
       keepHeaderOnError: true,

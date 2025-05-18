@@ -98,6 +98,17 @@
       "allowedTypes": [
         "images"
       ]
+    },
+    "wallet": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::wallet.wallet"
+    },
+    "favorite_wallets": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::wallet.wallet",
+      "mappedBy": "user"
     }
   }
 }

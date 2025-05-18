@@ -14,75 +14,75 @@
     "listedValue": {
       "type": "biginteger",
       "default": 0,
-      "required": true
+      "required": false
     },
     "transactions": {
       "type": "biginteger",
       "default": 0,
-      "required": true
+      "required": false
     },
     "accesses": {
       "type": "biginteger",
       "default": 0,
-      "required": true
+      "required": false
     },
     "successfully": {
       "type": "biginteger",
       "default": 0,
-      "required": true
+      "required": false
     },
     "amount": {
       "type": "biginteger",
       "default": 0,
-      "required": true
+      "required": false
     },
     "duration": {
       "type": "biginteger",
       "default": 0,
-      "required": true
+      "required": false
     },
     "latestBank": {
       "type": "string",
-      "required": true
+      "required": false
     },
     "deposited": {
       "type": "biginteger",
       "default": 0,
-      "required": true
+      "required": false
     },
     "videoViews": {
       "type": "biginteger",
       "default": 0,
-      "required": true
+      "required": false
     },
     "withdrawn": {
       "type": "biginteger",
       "default": 0,
-      "required": true
+      "required": false
     },
     "members": {
       "type": "integer",
       "default": 0,
-      "required": true
+      "required": false
     },
     "remaining": {
       "type": "biginteger",
       "default": 0,
-      "required": true
+      "required": false
     },
     "online": {
       "type": "integer",
       "default": 0,
-      "required": true
+      "required": false
     },
     "hasExpiry": {
       "type": "boolean",
       "default": false,
-      "required": true
+      "required": false
     },
     "lastUpdated": {
       "type": "datetime",
-      "required": true
+      "required": false
     }
   }
 }

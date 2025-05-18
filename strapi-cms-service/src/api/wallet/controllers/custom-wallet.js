@@ -83,6 +83,8 @@ const getWalletByJwt = async (ctx) => {
   try {
     // Extract token from header
     const token = ctx.request.header.authorization?.split(' ')[1];
+    console.log(token);
+    
     if (!token) {
       return ctx.unauthorized('No token provided.');
     }

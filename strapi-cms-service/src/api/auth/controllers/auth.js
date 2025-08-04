@@ -6,6 +6,7 @@ const { sanitize } = require('@strapi/utils');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { getUserApproveMode } = require('../../../common/services/system-config');
+const { createFileEntry } = require('../../../common/files-utils');
 
 const login = async (ctx) => {
   const { cccd, password } = ctx.request.body;
@@ -95,21 +96,7 @@ const register = async (ctx) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create a file entry for the avatar
-    let avatarFile = null;
-    if (avt) {
-      avatarFile = await strapi.db.query('plugin::upload.file').create({
-        data: {
-          name: `avatar-${Date.now()}`,
-          url: avt,
-          provider: 'cloudinary',
-          mime: 'image/jpeg',
-          size: 0,
-          hash: `avatar-${Date.now()}`,
-          ext: '.jpg',
-          folderPath: '/',
-        },
-      });
-    }
+    let avatarFile = await createFileEntry(avt);
 
     const userApproveMode = await getUserApproveMode(); // Get the current transaction approve mode
 

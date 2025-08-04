@@ -479,6 +479,45 @@ export interface ApiEventEvent extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiFreelancerFreelancer extends Struct.CollectionTypeSchema {
+  collectionName: 'freelancers';
+  info: {
+    description: '';
+    displayName: 'Freelancer';
+    pluralName: 'freelancers';
+    singularName: 'freelancer';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    deposit: Schema.Attribute.Decimal;
+    endDate: Schema.Attribute.DateTime;
+    endLocation: Schema.Attribute.String;
+    estimate: Schema.Attribute.Text;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::freelancer.freelancer'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String;
+    price: Schema.Attribute.Decimal;
+    publishedAt: Schema.Attribute.DateTime;
+    requirement: Schema.Attribute.Text;
+    serviceFee: Schema.Attribute.Decimal;
+    startDate: Schema.Attribute.DateTime;
+    startLocation: Schema.Attribute.String;
+    type: Schema.Attribute.Enumeration<['online', 'offline']>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiGlobalGlobal extends Struct.SingleTypeSchema {
   collectionName: 'globals';
   info: {
@@ -508,6 +547,177 @@ export interface ApiGlobalGlobal extends Struct.SingleTypeSchema {
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+  };
+}
+
+export interface ApiLiveLive extends Struct.CollectionTypeSchema {
+  collectionName: 'lives';
+  info: {
+    description: '';
+    displayName: 'Live';
+    pluralName: 'lives';
+    singularName: 'live';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    adContent: Schema.Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios',
+      true
+    >;
+    allowAdvertising: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    deposit: Schema.Attribute.Decimal &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      >;
+    expectedAiringTime: Schema.Attribute.DateTime;
+    filename: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::live.live'> &
+      Schema.Attribute.Private;
+    messagePrice: Schema.Attribute.Decimal &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      >;
+    name: Schema.Attribute.String;
+    ownerPercentage: Schema.Attribute.Decimal &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 100;
+          min: 0;
+        },
+        number
+      >;
+    priceBaseLocal: Schema.Attribute.Decimal &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      >;
+    publishedAt: Schema.Attribute.DateTime;
+    rightsDocument: Schema.Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios',
+      true
+    >;
+    showAd: Schema.Attribute.Decimal &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      >;
+    startAdvertisingFromSeconds: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      >;
+    startAdvertisingFromViews: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      >;
+    unitPrice: Schema.Attribute.Decimal &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      >;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    watchPrice: Schema.Attribute.Decimal &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      >;
+  };
+}
+
+export interface ApiMovieMovie extends Struct.CollectionTypeSchema {
+  collectionName: 'movies';
+  info: {
+    description: '';
+    displayName: 'Movie';
+    pluralName: 'movies';
+    singularName: 'movie';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    adContent: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    adOnMainPageFee: Schema.Attribute.Decimal &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    deposit: Schema.Attribute.Decimal &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      >;
+    filename: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::movie.movie'> &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String;
+    ownerPercentage: Schema.Attribute.Decimal &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 100;
+          min: 0;
+        },
+        number
+      >;
+    publishedAt: Schema.Attribute.DateTime;
+    rightsDocument: Schema.Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios',
+      true
+    >;
+    source: Schema.Attribute.Media<'files' | 'videos', true>;
+    unitPrice: Schema.Attribute.Decimal &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      >;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    watchPrice: Schema.Attribute.Decimal &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      >;
   };
 }
 
@@ -559,41 +769,6 @@ export interface ApiPaymentTransactionPaymentTransaction
   };
 }
 
-export interface ApiProductDocumentProductDocument
-  extends Struct.CollectionTypeSchema {
-  collectionName: 'product_documents';
-  info: {
-    description: '';
-    displayName: 'Product document';
-    pluralName: 'product-documents';
-    singularName: 'product-document';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    files: Schema.Attribute.Media<'images' | 'files', true> &
-      Schema.Attribute.Required;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::product-document.product-document'
-    > &
-      Schema.Attribute.Private;
-    product: Schema.Attribute.Relation<'manyToOne', 'api::product.product'>;
-    publishedAt: Schema.Attribute.DateTime;
-    type: Schema.Attribute.Enumeration<
-      ['BBBG', 'CONTRACT_WITH_SYSTEM', 'ORTHERS']
-    >;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-  };
-}
-
 export interface ApiProductProduct extends Struct.CollectionTypeSchema {
   collectionName: 'products';
   info: {
@@ -606,73 +781,145 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     draftAndPublish: false;
   };
   attributes: {
-    actual_price: Schema.Attribute.Decimal &
+    address: Schema.Attribute.Text;
+    advertisingAmount: Schema.Attribute.Decimal &
       Schema.Attribute.SetMinMax<
         {
           min: 0;
         },
         number
-      > &
-      Schema.Attribute.DefaultTo<0>;
-    buy_user: Schema.Attribute.String;
-    buyer_actions: Schema.Attribute.Enumeration<
-      [
-        'AWAITING',
-        'RECEIPT AND PAYMENT',
-        'RETURNS GOODS TAKE DEPOSIT',
-        'CLOSED',
-      ]
-    >;
-    category: Schema.Attribute.String;
-    confirmed: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
-    create_user: Schema.Attribute.String & Schema.Attribute.Required;
+      >;
+    advertisingUrl: Schema.Attribute.String;
+    askingPrice: Schema.Attribute.Decimal;
+    autoAcceptPrice: Schema.Attribute.Decimal;
+    color: Schema.Attribute.String;
+    confirmOwnership: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
+    contractDuration: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      >;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    deposit_price: Schema.Attribute.Decimal &
+    deliveryDate: Schema.Attribute.Date;
+    deliveryDays: Schema.Attribute.Integer &
       Schema.Attribute.SetMinMax<
         {
           min: 0;
         },
         number
-      > &
-      Schema.Attribute.DefaultTo<0>;
-    images: Schema.Attribute.Media<'images' | 'files' | 'videos', true>;
-    init_price: Schema.Attribute.Decimal &
-      Schema.Attribute.Required &
+      >;
+    depositRequirement: Schema.Attribute.String;
+    description: Schema.Attribute.Text;
+    displayPrice: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    email: Schema.Attribute.Email;
+    endPostTime: Schema.Attribute.DateTime;
+    estimatedValue: Schema.Attribute.Decimal;
+    eventFeePercentage: Schema.Attribute.Decimal &
+      Schema.Attribute.SetMinMax<
+        {
+          max: 100;
+          min: 0;
+        },
+        number
+      >;
+    hidePrice: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    highestAmount: Schema.Attribute.Decimal &
       Schema.Attribute.SetMinMax<
         {
           min: 0;
         },
         number
-      > &
-      Schema.Attribute.DefaultTo<0>;
+      >;
+    highestAutoAcceptPrice: Schema.Attribute.Decimal &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      >;
+    highestUnitAskingPrice: Schema.Attribute.Decimal &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      >;
+    image: Schema.Attribute.Media<'images'>;
+    livestreamFee: Schema.Attribute.Decimal &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      >;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::product.product'
     > &
       Schema.Attribute.Private;
-    name: Schema.Attribute.String & Schema.Attribute.Required;
-    payment_transaction_id: Schema.Attribute.String;
-    product_documents: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::product-document.product-document'
-    >;
+    location: Schema.Attribute.String;
+    lowestAmount: Schema.Attribute.Decimal &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      >;
+    lowestAutoAcceptPrice: Schema.Attribute.Decimal &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      >;
+    lowestUnitAskingPrice: Schema.Attribute.Decimal &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      >;
+    lowUnitPrice: Schema.Attribute.Decimal &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      >;
+    marketPrice: Schema.Attribute.Decimal;
+    model: Schema.Attribute.String;
+    name: Schema.Attribute.String;
+    personInCharge: Schema.Attribute.String;
+    phoneNumber: Schema.Attribute.String;
+    price: Schema.Attribute.Decimal;
     publishedAt: Schema.Attribute.DateTime;
-    reason: Schema.Attribute.Text;
-    regions: Schema.Attribute.String;
-    seller_actions: Schema.Attribute.Enumeration<
-      [
-        'OPENED',
-        'AWAITING CONFIRM',
-        'CONFIRMED',
-        'DELIVERY AND PAYMENT',
-        'RECEIVE GOODS AND LOST DEPOSIT',
-        'CLOSED',
-      ]
-    > &
-      Schema.Attribute.DefaultTo<'OPENED'>;
+    qualityFiles: Schema.Attribute.Media<'files', true>;
+    registerForAdvertising: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
+    showOnMainPage: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<0>;
+    showOnVideo: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<0>;
+    size: Schema.Attribute.String;
+    successFee: Schema.Attribute.Decimal &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      >;
+    totalFees: Schema.Attribute.Decimal &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      >;
+    unit: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -765,6 +1012,67 @@ export interface ApiSystemInfoSystemInfo extends Struct.SingleTypeSchema {
       Schema.Attribute.Private;
     videoViews: Schema.Attribute.BigInteger & Schema.Attribute.DefaultTo<0>;
     withdrawn: Schema.Attribute.BigInteger & Schema.Attribute.DefaultTo<0>;
+  };
+}
+
+export interface ApiVideoVideo extends Struct.CollectionTypeSchema {
+  collectionName: 'videos';
+  info: {
+    description: '';
+    displayName: 'Video';
+    pluralName: 'videos';
+    singularName: 'video';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    allowAdvertising: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
+    confirmCopyright: Schema.Attribute.Boolean;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    insertAd: Schema.Attribute.Decimal &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      >;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::video.video'> &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    savelocation: Schema.Attribute.String;
+    showAd: Schema.Attribute.Decimal &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      >;
+    source: Schema.Attribute.Media<'files' | 'videos'>;
+    startFromTime: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<0>;
+    startFromView: Schema.Attribute.Integer &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<0>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
   };
 }
 
@@ -1409,12 +1717,15 @@ declare module '@strapi/strapi' {
       'api::additional-transaction.additional-transaction': ApiAdditionalTransactionAdditionalTransaction;
       'api::audit-trail.audit-trail': ApiAuditTrailAuditTrail;
       'api::event.event': ApiEventEvent;
+      'api::freelancer.freelancer': ApiFreelancerFreelancer;
       'api::global.global': ApiGlobalGlobal;
+      'api::live.live': ApiLiveLive;
+      'api::movie.movie': ApiMovieMovie;
       'api::payment-transaction.payment-transaction': ApiPaymentTransactionPaymentTransaction;
-      'api::product-document.product-document': ApiProductDocumentProductDocument;
       'api::product.product': ApiProductProduct;
       'api::system-configuration.system-configuration': ApiSystemConfigurationSystemConfiguration;
       'api::system-info.system-info': ApiSystemInfoSystemInfo;
+      'api::video.video': ApiVideoVideo;
       'api::wallet.wallet': ApiWalletWallet;
       'api::with-drawth-transaction.with-drawth-transaction': ApiWithDrawthTransactionWithDrawthTransaction;
       'plugin::content-releases.release': PluginContentReleasesRelease;

@@ -12,86 +12,184 @@
   },
   "attributes": {
     "name": {
-      "type": "string",
-      "required": true
+      "type": "string"
     },
-    "init_price": {
-      "type": "decimal",
-      "required": true,
-      "default": 0,
-      "min": 0
+    "model": {
+      "type": "string"
     },
-    "create_user": {
-      "type": "string",
-      "required": true
+    "size": {
+      "type": "string"
     },
-    "actual_price": {
-      "type": "decimal",
-      "default": 0,
-      "required": false,
-      "min": 0
+    "color": {
+      "type": "string"
     },
-    "deposit_price": {
-      "type": "decimal",
-      "required": false,
-      "default": 0,
-      "min": 0
+    "price": {
+      "type": "decimal"
     },
-    "reason": {
-      "type": "text"
+    "askingPrice": {
+      "type": "decimal"
     },
-    "seller_actions": {
-      "type": "enumeration",
-      "enum": [
-        "OPENED",
-        "AWAITING CONFIRM",
-        "CONFIRMED",
-        "DELIVERY AND PAYMENT",
-        "RECEIVE GOODS AND LOST DEPOSIT",
-        "CLOSED"
-      ],
-      "default": "OPENED"
+    "displayPrice": {
+      "type": "boolean",
+      "default": true
     },
-    "confirmed": {
+    "hidePrice": {
       "type": "boolean",
       "default": false
     },
-    "category": {
+    "location": {
       "type": "string"
     },
-    "regions": {
-      "type": "string"
+    "address": {
+      "type": "text"
     },
-    "images": {
+    "description": {
+      "type": "text"
+    },
+    "estimatedValue": {
+      "type": "decimal"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "qualityFiles": {
       "type": "media",
       "multiple": true,
       "required": false,
       "allowedTypes": [
-        "images",
-        "files",
-        "videos"
+        "files"
       ]
     },
-    "buy_user": {
+    "deliveryDate": {
+      "type": "date",
+      "description": "Day of delivery after accept"
+    },
+    "depositRequirement": {
+      "type": "string",
+      "description": "Deposit requirement"
+    },
+    "autoAcceptPrice": {
+      "type": "decimal",
+      "description": "Price to automatically accept"
+    },
+    "unit": {
       "type": "string"
     },
-    "payment_transaction_id": {
+    "marketPrice": {
+      "type": "decimal"
+    },
+    "lowUnitPrice": {
+      "type": "decimal",
+      "min": 0
+    },
+    "lowestUnitAskingPrice": {
+      "type": "decimal",
+      "min": 0,
+      "description": "Lowest unit asking price"
+    },
+    "highestUnitAskingPrice": {
+      "type": "decimal",
+      "min": 0,
+      "description": "Highest unit asking price"
+    },
+    "deliveryDays": {
+      "type": "integer",
+      "min": 0,
+      "description": "Number of days to delivery after accept"
+    },
+    "endPostTime": {
+      "type": "datetime",
+      "description": "End post time"
+    },
+    "lowestAmount": {
+      "type": "decimal",
+      "min": 0,
+      "description": "Lowest amount"
+    },
+    "highestAmount": {
+      "type": "decimal",
+      "min": 0,
+      "description": "Highest amount"
+    },
+    "lowestAutoAcceptPrice": {
+      "type": "decimal",
+      "min": 0,
+      "description": "Lowest price to automatically accept"
+    },
+    "highestAutoAcceptPrice": {
+      "type": "decimal",
+      "min": 0,
+      "description": "Highest price to automatically accept"
+    },
+    "contractDuration": {
+      "type": "integer",
+      "min": 0,
+      "description": "Contract duration in days"
+    },
+    "personInCharge": {
+      "type": "string",
+      "description": "Other person in charge"
+    },
+    "phoneNumber": {
       "type": "string"
     },
-    "product_documents": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::product-document.product-document",
-      "mappedBy": "product"
+    "email": {
+      "type": "email"
     },
-    "buyer_actions": {
-      "type": "enumeration",
-      "enum": [
-        "AWAITING",
-        "RECEIPT AND PAYMENT",
-        "RETURNS GOODS TAKE DEPOSIT",
-        "CLOSED"
-      ]
+    "confirmOwnership": {
+      "type": "boolean",
+      "default": false,
+      "description": "Confirm ownership and responsibility about the goods"
+    },
+    "eventFeePercentage": {
+      "type": "decimal",
+      "min": 0,
+      "max": 100,
+      "description": "Event fee percentage"
+    },
+    "livestreamFee": {
+      "type": "decimal",
+      "min": 0,
+      "description": "Livestream fee"
+    },
+    "advertisingAmount": {
+      "type": "decimal",
+      "min": 0,
+      "description": "Amount for advertising"
+    },
+    "showOnMainPage": {
+      "type": "decimal",
+      "default": 0,
+      "description": "Display on main page"
+    },
+    "showOnVideo": {
+      "type": "decimal",
+      "default": 0,
+      "description": "Display on video"
+    },
+    "advertisingUrl": {
+      "type": "string",
+      "description": "Advertising content URL"
+    },
+    "registerForAdvertising": {
+      "type": "boolean",
+      "default": false,
+      "description": "Register to make advertising"
+    },
+    "successFee": {
+      "type": "decimal",
+      "min": 0,
+      "description": "Success fee"
+    },
+    "totalFees": {
+      "type": "decimal",
+      "min": 0,
+      "description": "Total fees"
     }
   }
 }

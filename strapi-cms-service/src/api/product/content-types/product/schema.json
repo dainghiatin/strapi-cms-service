@@ -190,6 +190,34 @@
       "type": "decimal",
       "min": 0,
       "description": "Total fees"
+    },
+    "listingType": {
+      "type": "string",
+      "required": true,
+      "default": "sale"
+    },
+    "categoryType": {
+      "type": "string",
+      "required": true,
+      "default": "goods"
+    },
+    "conditionType": {
+      "type": "string",
+      "default": "new",
+      "required": true
+    },
+    "nation": {
+      "type": "string"
+    },
+    "province": {
+      "type": "string"
+    },
+    "custom_id": {
+      "type": "string",
+      "required": false
+    },
+    "setPrice": {
+      "type": "decimal"
     }
   }
 }

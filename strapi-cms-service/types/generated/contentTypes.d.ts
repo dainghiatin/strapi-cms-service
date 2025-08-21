@@ -491,6 +491,10 @@ export interface ApiFreelancerFreelancer extends Struct.CollectionTypeSchema {
     draftAndPublish: false;
   };
   attributes: {
+    create_user: Schema.Attribute.Relation<
+      'oneToOne',
+      'plugin::users-permissions.user'
+    >;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -505,6 +509,7 @@ export interface ApiFreelancerFreelancer extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Private;
     name: Schema.Attribute.String;
+    pic: Schema.Attribute.String;
     price: Schema.Attribute.Decimal;
     publishedAt: Schema.Attribute.DateTime;
     requirement: Schema.Attribute.Text;
@@ -792,7 +797,13 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     advertisingUrl: Schema.Attribute.String;
     askingPrice: Schema.Attribute.Decimal;
     autoAcceptPrice: Schema.Attribute.Decimal;
+    categoryType: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'goods'>;
     color: Schema.Attribute.String;
+    conditionType: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'new'>;
     confirmOwnership: Schema.Attribute.Boolean &
       Schema.Attribute.DefaultTo<false>;
     contractDuration: Schema.Attribute.Integer &
@@ -805,6 +816,7 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    custom_id: Schema.Attribute.String;
     deliveryDate: Schema.Attribute.Date;
     deliveryDays: Schema.Attribute.Integer &
       Schema.Attribute.SetMinMax<
@@ -850,6 +862,9 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
         number
       >;
     image: Schema.Attribute.Media<'images'>;
+    listingType: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'sale'>;
     livestreamFee: Schema.Attribute.Decimal &
       Schema.Attribute.SetMinMax<
         {
@@ -895,13 +910,16 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     marketPrice: Schema.Attribute.Decimal;
     model: Schema.Attribute.String;
     name: Schema.Attribute.String;
+    nation: Schema.Attribute.String;
     personInCharge: Schema.Attribute.String;
     phoneNumber: Schema.Attribute.String;
     price: Schema.Attribute.Decimal;
+    province: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     qualityFiles: Schema.Attribute.Media<'files', true>;
     registerForAdvertising: Schema.Attribute.Boolean &
       Schema.Attribute.DefaultTo<false>;
+    setPrice: Schema.Attribute.Decimal;
     showOnMainPage: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<0>;
     showOnVideo: Schema.Attribute.Decimal & Schema.Attribute.DefaultTo<0>;
     size: Schema.Attribute.String;

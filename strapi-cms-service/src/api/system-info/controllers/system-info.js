@@ -1,5 +1,8 @@
 'use strict';
 
+const { pushNotification } = require('../../../common/notification');
+const { realtimeDB } = require('../../../common/services/firebase');
+const {data } = require('./nuoc.json');
 /**
  * system-info controller
  */
@@ -29,7 +32,8 @@ const getMetrics = async (ctx) => {
         });
 
         const metrics = metricsResults[0] || null;
-
+        await pushNotification(1, "N1");
+        
         return {
             data: metrics
         };  
@@ -101,7 +105,12 @@ const updateMetrics = async (ctx) => {
     }
 }   
 
+const getCountryData = async (ctx) => {
+    return data;
+}
+
 module.exports = {
     getMetrics,
-    updateMetrics
+    updateMetrics,
+    getCountryData
 }

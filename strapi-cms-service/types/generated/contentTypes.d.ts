@@ -726,6 +726,36 @@ export interface ApiMovieMovie extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiNotiTemplateNotiTemplate
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'noti_templates';
+  info: {
+    displayName: 'noti-template';
+    pluralName: 'noti-templates';
+    singularName: 'noti-template';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    code: Schema.Attribute.String & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::noti-template.noti-template'
+    > &
+      Schema.Attribute.Private;
+    message: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiPaymentTransactionPaymentTransaction
   extends Struct.CollectionTypeSchema {
   collectionName: 'payment_transactions';
@@ -1714,6 +1744,7 @@ export interface PluginUsersPermissionsUser
       'manyToOne',
       'plugin::users-permissions.role'
     >;
+    signature: Schema.Attribute.Media<'images' | 'files'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1739,6 +1770,7 @@ declare module '@strapi/strapi' {
       'api::global.global': ApiGlobalGlobal;
       'api::live.live': ApiLiveLive;
       'api::movie.movie': ApiMovieMovie;
+      'api::noti-template.noti-template': ApiNotiTemplateNotiTemplate;
       'api::payment-transaction.payment-transaction': ApiPaymentTransactionPaymentTransaction;
       'api::product.product': ApiProductProduct;
       'api::system-configuration.system-configuration': ApiSystemConfigurationSystemConfiguration;

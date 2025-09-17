@@ -109,6 +109,14 @@
       "relation": "oneToMany",
       "target": "api::wallet.wallet",
       "mappedBy": "user"
+    },
+    "signature": {
+      "allowedTypes": [
+        "images",
+        "files"
+      ],
+      "type": "media",
+      "multiple": false
     }
   }
 }

@@ -5,8 +5,14 @@
 const { sanitize } = require('@strapi/utils');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const QRCode = require('qrcode');
+const crypto = require('crypto');
 const { getUserApproveMode } = require('../../../common/services/system-config');
 const { createFileEntry } = require('../../../common/files-utils');
+const { pushNotification } = require('../../../common/notification');
+
+// In-memory storage for QR codes (in production, use Redis or database)
+const qrCodeStore = new Map();
 
 const login = async (ctx) => {
   const { cccd, password } = ctx.request.body;
@@ -73,9 +79,12 @@ const register = async (ctx) => {
     bank_name, 
     address_no, 
     address_on_map,
-    avt // This will be the URL of the image
+    avt,// This will be the URL of the image
+    signature, 
+
   } = ctx.request.body;
 
+  console.log(ctx.request.body);
   if (!password || !cccd) {
     return ctx.badRequest('Missing required fields');
   }
@@ -97,8 +106,15 @@ const register = async (ctx) => {
 
     // Create a file entry for the avatar
     let avatarFile = await createFileEntry(avt);
+    let signatureFile = await createFileEntry(signature);
+    console.log(signatureFile);
 
     const userApproveMode = await getUserApproveMode(); // Get the current transaction approve mode
+    
+    // Get the authenticated role
+    const authenticatedRole = await strapi.query('plugin::users-permissions.role').findOne({
+      where: { type: 'authenticated' },
+    });
 
     const user = await strapi.db.query('plugin::users-permissions.user').create({
       data: {
@@ -114,7 +130,9 @@ const register = async (ctx) => {
         address_no,
         address_on_map,
         avt: avatarFile ? avatarFile.id : null,
+        signature: signatureFile ? signatureFile.id : null,
         confirmed: userApproveMode === 'manual mode'? false : true,
+        role: authenticatedRole.id, // Assign the authenticated role
       },
     });
 
@@ -135,6 +153,7 @@ const register = async (ctx) => {
       avt: populatedUser.avt ? populatedUser.avt.url : null
     };
 
+    await pushNotification(user.id, "N1")
     ctx.send({
       jwt: token,
       user: userWithAvatar,
@@ -147,9 +166,9 @@ const register = async (ctx) => {
 }
 
 const changePassword = async (ctx) => {
-  const { cccd, current_password, new_password, confirm_password } = ctx.request.body;
-
-  if (!cccd || !current_password || !new_password || !confirm_password) {
+  const { cccd, new_password, confirm_password } = ctx.request.body;
+  console.log(ctx.request.body);
+  if (!cccd || !new_password || !confirm_password) {
     return ctx.badRequest('All fields are required');
   }
 
@@ -161,26 +180,50 @@ const changePassword = async (ctx) => {
     // Find user by CCCD
     const user = await strapi.db.query('plugin::users-permissions.user').findOne({
       where: { cccd: cccd },
+      populate: ['wallet']
     });
 
     if (!user) {
       return ctx.notFound('User not found');
     }
 
-    // Verify current password
-    const validPassword = await verifyPassword(current_password, user.password);
-    if (!validPassword) {
-      return ctx.unauthorized('Current password is incorrect');
-    }
-
     // Hash new password
     const hashedPassword = await bcrypt.hash(new_password, 10);
 
-    // Update password
+    // Update password and set confirmed to true
     await strapi.db.query('plugin::users-permissions.user').update({
       where: { id: user.id },
-      data: { password: hashedPassword },
+      data: { 
+        password: hashedPassword,
+        confirmed: true 
+      }
     });
+
+    // Check if user has a wallet, create one if not exists
+    if (!user.wallet) {
+      // Create a wallet for the user
+      const wallet = await strapi.entityService.create('api::wallet.wallet', {
+        data: {
+          cccd: user.cccd,
+          total: 0,
+          account_of_goods: 0,
+          account_of_freelancer: 0,
+          account_of_ailive: 0,
+          pending_amount: 0,
+          user_id: user.id,
+          name: user.full_name || user.username,
+          user: user.id
+        }
+      });
+
+      // Link the wallet to the user
+      await strapi.db.query('plugin::users-permissions.user').update({
+        where: { id: user.id },
+        data: { wallet: wallet.id }
+      });
+
+      console.log(`Created wallet for user ${user.id} with CCCD ${user.cccd}`);
+    }
 
     return ctx.send({ message: 'Password updated successfully' });
   } catch (err) {
@@ -336,6 +379,165 @@ const searchByCCCD = async (ctx) => {
   }
 }
 
+// Generate QR code for mobile login
+const generateQR = async (ctx) => {
+  try {
+    // Generate a unique session ID
+    const sessionId = crypto.randomUUID();
+    const timestamp = Date.now();
+    
+    // Create QR code data
+    const qrData = {
+      sessionId,
+      timestamp,
+      type: 'mobile_login',
+      appUrl: process.env.MOBILE_APP_URL || 'myapp://login'
+    };
+    
+    // Store session data with expiration (5 minutes)
+    qrCodeStore.set(sessionId, {
+      ...qrData,
+      status: 'pending',
+      expiresAt: timestamp + (5 * 60 * 1000) // 5 minutes
+    });
+    
+    // Generate QR code as base64 image
+    const qrCodeUrl = `${qrData.appUrl}?sessionId=${sessionId}&timestamp=${timestamp}`;
+    const qrCodeImage = await QRCode.toDataURL(qrCodeUrl);
+    
+    return ctx.send({
+      sessionId,
+      qrCode: qrCodeImage,
+      expiresIn: 300 // 5 minutes in seconds
+    });
+  } catch (error) {
+    console.error('QR generation error:', error);
+    return ctx.internalServerError('Failed to generate QR code');
+  }
+};
+
+// Verify QR code and authenticate user from mobile app
+const verifyQR = async (ctx) => {
+  try {
+    const { sessionId, cccd, password } = ctx.request.body;
+    
+    if (!sessionId || !cccd || !password) {
+      return ctx.badRequest('sessionId, cccd, and password are required');
+    }
+    
+    // Check if session exists and is valid
+    const session = qrCodeStore.get(sessionId);
+    if (!session) {
+      return ctx.badRequest('Invalid or expired session');
+    }
+    
+    if (Date.now() > session.expiresAt) {
+      qrCodeStore.delete(sessionId);
+      return ctx.badRequest('Session expired');
+    }
+    
+    if (session.status !== 'pending') {
+      return ctx.badRequest('Session already used');
+    }
+    
+    // Verify user credentials
+    const existingUser = await strapi.db.query('plugin::users-permissions.user').findOne({
+      where: { cccd: cccd },
+      populate: ["avt.url"],
+    });
+    
+    if (!existingUser) {
+      return ctx.unauthorized('Invalid credentials');
+    }
+    
+    const validPassword = await verifyPassword(password, existingUser.password);
+    if (!validPassword) {
+      return ctx.unauthorized('Invalid credentials');
+    }
+    
+    // Generate JWT token
+    const token = jwt.sign(
+      { cccd: existingUser.cccd, id: existingUser.id },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' }
+    );
+    
+    // Update session status
+    qrCodeStore.set(sessionId, {
+      ...session,
+      status: 'authenticated',
+      token,
+      user: existingUser
+    });
+    
+    return ctx.send({
+      success: true,
+      message: 'Authentication successful',
+      token,
+      user: existingUser
+    });
+  } catch (error) {
+    console.error('QR verification error:', error);
+    return ctx.internalServerError('Failed to verify QR code');
+  }
+};
+
+// Complete QR login process (called by web client)
+const qrLogin = async (ctx) => {
+  try {
+    const { sessionId } = ctx.request.body;
+    
+    if (!sessionId) {
+      return ctx.badRequest('sessionId is required');
+    }
+    
+    // Check session status
+    const session = qrCodeStore.get(sessionId);
+    if (!session) {
+      return ctx.badRequest('Invalid or expired session');
+    }
+    
+    if (Date.now() > session.expiresAt) {
+      qrCodeStore.delete(sessionId);
+      return ctx.badRequest('Session expired');
+    }
+    
+    if (session.status === 'pending') {
+      return ctx.send({
+        status: 'pending',
+        message: 'Waiting for mobile authentication'
+      });
+    }
+    
+    if (session.status === 'authenticated') {
+      // Clean up session
+      qrCodeStore.delete(sessionId);
+      
+      return ctx.send({
+        status: 'authenticated',
+        token: session.token,
+        user: session.user
+      });
+    }
+    
+    return ctx.badRequest('Invalid session status');
+  } catch (error) {
+    console.error('QR login error:', error);
+    return ctx.internalServerError('Failed to complete QR login');
+  }
+};
+
+// Clean up expired sessions periodically
+setInterval(() => {
+  const now = Date.now();
+  for (const [sessionId, session] of qrCodeStore.entries()) {
+    if (now > session.expiresAt) {
+      qrCodeStore.delete(sessionId);
+    }
+  }
+}, 60000); // Clean up every minute
+
 module.exports = {
-  login, register, changePassword, getMe, updateUser, searchByCCCD
+  login, register, changePassword, getMe, updateUser, searchByCCCD,
+  generateQR, verifyQR, qrLogin
 };

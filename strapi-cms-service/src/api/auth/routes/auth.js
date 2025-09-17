@@ -56,5 +56,32 @@ module.exports = {
         policies: [],
       },
     },
+    {
+      method: 'POST',
+      path: '/auth/generate-qr',
+      handler: 'auth.generateQR',
+      config: {
+        auth: false,
+        policies: [],
+      },
+    },
+    {
+      method: 'POST',
+      path: '/auth/verify-qr',
+      handler: 'auth.verifyQR',
+      config: {
+        auth: false,
+        policies: [],
+      },
+    },
+    {
+      method: 'POST',
+      path: '/auth/qr-login',
+      handler: 'auth.qrLogin',
+      config: {
+        auth: false,
+        policies: [],
+      },
+    },
   ],
 };

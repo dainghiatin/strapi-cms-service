@@ -24,15 +24,16 @@ module.exports = {
           auth: false,
           policies: [],
         },
-      }
-      // {
-      //   method: 'GET',
-      //   path: '/system-info/metrics',
-      //   handler: 'system-info.getMetrics',
-      //   config: {
-      //     auth: false
-      //   }
-      // },
+      },
+      {
+        method: 'GET',
+        path: '/system-info/country-data',
+        handler: 'system-info.getCountryData',
+        config: {
+          auth: false,
+          policies: [],
+        },
+      },
       // {
       //   method: 'POST',
       //   path: '/system-info/metrics',

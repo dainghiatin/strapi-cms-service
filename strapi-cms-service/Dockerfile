@@ -63,6 +63,7 @@ COPY ca.pem ./ca.pem
 
 
 RUN npm install
+RUN npm run build
 
 
 # Expose the port Strapi runs on

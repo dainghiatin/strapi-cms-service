@@ -57,7 +57,7 @@ COPY config ./config
 COPY database ./database
 COPY public ./public
 COPY src ./src
-COPY build ./build
+# COPY build ./build
 COPY .env* ./
 COPY ca.pem ./ca.pem
 

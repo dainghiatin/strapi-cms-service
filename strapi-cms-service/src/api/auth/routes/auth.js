@@ -83,5 +83,14 @@ module.exports = {
         policies: [],
       },
     },
+    {
+      method: 'POST',
+      path: '/auth/verify-bank-number',
+      handler: 'auth.verifyBankNumber',
+      config: {
+        auth: false,
+        policies: [],
+      },
+    },
   ],
 };

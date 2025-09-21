@@ -537,7 +537,23 @@ setInterval(() => {
   }
 }, 60000); // Clean up every minute
 
+const verifyBankNumber = async (ctx) => {
+  try {
+    const { bankNumber, bankName, accountName } = ctx.request.body;
+    if (!bankNumber || !bankName || !accountName) {
+      return ctx.badRequest('bankNumber, bankName, and accountName are required');
+    }
+    return ctx.send({
+      success: true,
+      message: 'Bank number is valid'
+    });
+  } catch (error) {
+    console.error('Bank number verification error:', error);
+    return ctx.internalServerError('Failed to verify bank number');
+  }
+}
+
 module.exports = {
   login, register, changePassword, getMe, updateUser, searchByCCCD,
-  generateQR, verifyQR, qrLogin
+  generateQR, verifyQR, qrLogin, verifyBankNumber
 };

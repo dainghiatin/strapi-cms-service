@@ -32,7 +32,7 @@ const getMetrics = async (ctx) => {
         });
 
         const metrics = metricsResults[0] || null;
-        await pushNotification(1, "N1");
+        // await pushNotification(1, "N1");
         
         return {
             data: metrics

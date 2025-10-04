@@ -65,6 +65,15 @@ module.exports = {
         policies: [],
       },
     },
+       {
+      method: 'POST',
+      path: '/auth/generate-qr-info',
+      handler: 'auth.generateQRinfo',
+      config: {
+        auth: false,
+        policies: [],
+      },
+    },
     {
       method: 'POST',
       path: '/auth/verify-qr',

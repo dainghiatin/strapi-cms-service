@@ -526,7 +526,7 @@ export interface ApiFreelancerFreelancer extends Struct.CollectionTypeSchema {
 export interface ApiGlobalGlobal extends Struct.SingleTypeSchema {
   collectionName: 'globals';
   info: {
-    description: 'Define global settings';
+    description: 'Define global KeyboardIcon';
     displayName: 'Global';
     pluralName: 'globals';
     singularName: 'global';
@@ -992,6 +992,12 @@ export interface ApiSystemConfigurationSystemConfiguration
     };
   };
   attributes: {
+    country: Schema.Attribute.JSON &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;

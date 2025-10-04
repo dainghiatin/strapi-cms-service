@@ -40,7 +40,7 @@ FIREBASE_CLIENT_X509_CERT_URL=https://www.googleapis.com/robot/v1/metadata/x509/
 
 ### 3. Get Firebase Service Account Key
 
-1. Go to Firebase Console → Project Settings → Service Accounts
+1. Go to Firebase Console → Project KeyboardIcon → Service Accounts
 2. Click "Generate New Private Key"
 3. Download the JSON file
 4. Extract the values and add them to your `.env` file

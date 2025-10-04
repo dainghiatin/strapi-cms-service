@@ -10,6 +10,7 @@ const crypto = require('crypto');
 const { getUserApproveMode } = require('../../../common/services/system-config');
 const { createFileEntry } = require('../../../common/files-utils');
 const { pushNotification } = require('../../../common/notification');
+const { getUserFromToken } = require('../../../common/services/auth-utils');
 
 // In-memory storage for QR codes (in production, use Redis or database)
 const qrCodeStore = new Map();
@@ -67,20 +68,20 @@ const verifyPassword = async (plainTextPassword, hashedPassword) => {
 }
 
 const register = async (ctx) => {
-  const { 
-    username, 
-    email, 
-    password, 
-    cccd, 
-    reference_id, 
-    full_name, 
-    mobile_number, 
-    bank_number, 
-    bank_name, 
-    address_no, 
+  const {
+    username,
+    email,
+    password,
+    cccd,
+    reference_id,
+    full_name,
+    mobile_number,
+    bank_number,
+    bank_name,
+    address_no,
     address_on_map,
     avt,// This will be the URL of the image
-    signature, 
+    signature,
 
   } = ctx.request.body;
 
@@ -110,7 +111,7 @@ const register = async (ctx) => {
     console.log(signatureFile);
 
     const userApproveMode = await getUserApproveMode(); // Get the current transaction approve mode
-    
+
     // Get the authenticated role
     const authenticatedRole = await strapi.query('plugin::users-permissions.role').findOne({
       where: { type: 'authenticated' },
@@ -131,7 +132,7 @@ const register = async (ctx) => {
         address_on_map,
         avt: avatarFile ? avatarFile.id : null,
         signature: signatureFile ? signatureFile.id : null,
-        confirmed: userApproveMode === 'manual mode'? false : true,
+        confirmed: userApproveMode === 'manual mode' ? false : true,
         role: authenticatedRole.id, // Assign the authenticated role
       },
     });
@@ -193,9 +194,9 @@ const changePassword = async (ctx) => {
     // Update password and set confirmed to true
     await strapi.db.query('plugin::users-permissions.user').update({
       where: { id: user.id },
-      data: { 
+      data: {
         password: hashedPassword,
-        confirmed: true 
+        confirmed: true
       }
     });
 
@@ -236,7 +237,7 @@ const getMe = async (ctx) => {
   try {
     // Get the token from the Authorization header
     const token = ctx.request.header.authorization?.split(' ')[1];
-    
+
     if (!token) {
       return ctx.unauthorized('No token provided');
     }
@@ -278,14 +279,14 @@ const updateUser = async (ctx) => {
   try {
     // Get the token from the Authorization header
     const token = ctx.request.header.authorization?.split(' ')[1];
-    
+
     if (!token) {
       return ctx.unauthorized('No token provided');
     }
 
     // Verify and decode the token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    
+
     // Find user by CCCD from token
     const user = await strapi.db.query('plugin::users-permissions.user').findOne({
       // @ts-ignore
@@ -298,7 +299,7 @@ const updateUser = async (ctx) => {
 
     // Get update data from request body
     const updateData = ctx.request.body;
-    
+
     // Remove sensitive fields that shouldn't be updated through this endpoint
     delete updateData.password;
     delete updateData.cccd;
@@ -365,7 +366,7 @@ const searchByCCCD = async (ctx) => {
 
     // Remove sensitive information
     const { password, resetPasswordToken, confirmationToken, ...userWithoutSensitiveData } = user;
-    
+
     // Format avatar URL if exists
     const formattedUser = {
       ...userWithoutSensitiveData,
@@ -385,7 +386,7 @@ const generateQR = async (ctx) => {
     // Generate a unique session ID
     const sessionId = crypto.randomUUID();
     const timestamp = Date.now();
-    
+
     // Create QR code data
     const qrData = {
       sessionId,
@@ -393,21 +394,105 @@ const generateQR = async (ctx) => {
       type: 'mobile_login',
       appUrl: process.env.MOBILE_APP_URL || 'myapp://login'
     };
-    
+
     // Store session data with expiration (5 minutes)
     qrCodeStore.set(sessionId, {
       ...qrData,
       status: 'pending',
       expiresAt: timestamp + (5 * 60 * 1000) // 5 minutes
     });
-    
+
     // Generate QR code as base64 image
     const qrCodeUrl = `${qrData.appUrl}?sessionId=${sessionId}&timestamp=${timestamp}`;
     const qrCodeImage = await QRCode.toDataURL(qrCodeUrl);
-    
+
     return ctx.send({
       sessionId,
       qrCode: qrCodeImage,
+      expiresIn: 300 // 5 minutes in seconds
+    });
+  } catch (error) {
+    console.error('QR generation error:', error);
+    return ctx.internalServerError('Failed to generate QR code');
+  }
+};
+
+const generateQRinfo = async (ctx) => {
+  try {
+    // Extract and validate authorization header
+    const authHeader = ctx.request.header.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return ctx.unauthorized('Authorization token required');
+    }
+
+    // Extract user data from JWT token
+    const token = authHeader.split(' ')[1];
+    const user = await getUserFromToken(token, strapi);
+    
+    if (!user) {
+      return ctx.unauthorized('Invalid or expired token');
+    }
+
+    // Get user data from database with avatar populated
+    const existingUser = await strapi.db.query('plugin::users-permissions.user').findOne({
+      where: { cccd: user.cccd },
+      populate: ["avt"],
+    });
+    if (!existingUser) {
+      return ctx.notFound('User not found');
+    }
+
+    // Extract avatar and cccd from user data
+    const avatar = existingUser.avt?.url || null;
+    const cccd = existingUser.cccd;
+
+    // Validate required fields exist
+    if (!cccd) {
+      return ctx.badRequest('User missing required field: cccd');
+    }
+
+    // Validate avatar URL if it exists
+    if (avatar) {
+      try {
+        new URL(avatar);
+      } catch (urlError) {
+        return ctx.badRequest('Avatar must be a valid URL');
+      }
+    }
+
+    // Generate a unique session ID
+    const sessionId = crypto.randomUUID();
+    const timestamp = Date.now();
+
+    // Create QR code data with avatar and cccd
+    const qrData = {
+      sessionId,
+      timestamp,
+      type: 'mobile_login',
+      appUrl: process.env.MOBILE_APP_URL || 'myapp://login',
+      avatar: avatar || '', // Link to avatar image or empty string
+      stk: cccd, // Text field for STK (cccd)
+      userId: existingUser.id // Include user ID for reference
+    };
+
+    // Store session data with expiration (5 minutes)
+    qrCodeStore.set(sessionId, {
+      ...qrData,
+      status: 'pending',
+      expiresAt: timestamp + (5 * 60 * 1000) // 5 minutes
+    });
+
+    // Generate QR code URL with all parameters
+    const qrCodeUrl = `${qrData.appUrl}?sessionId=${sessionId}&timestamp=${timestamp}&avatar=${encodeURIComponent(avatar || '')}&stk=${encodeURIComponent(cccd)}`;
+
+    // Generate QR code as base64 image
+    const qrCodeImage = await QRCode.toDataURL(JSON.stringify(qrData));
+
+    return ctx.send({
+      sessionId,
+      qrCode: qrCodeImage,
+      avatar: avatar || null,
+      stk: cccd,
       expiresIn: 300 // 5 minutes in seconds
     });
   } catch (error) {
@@ -420,48 +505,48 @@ const generateQR = async (ctx) => {
 const verifyQR = async (ctx) => {
   try {
     const { sessionId, cccd, password } = ctx.request.body;
-    
+
     if (!sessionId || !cccd || !password) {
       return ctx.badRequest('sessionId, cccd, and password are required');
     }
-    
+
     // Check if session exists and is valid
     const session = qrCodeStore.get(sessionId);
     if (!session) {
       return ctx.badRequest('Invalid or expired session');
     }
-    
+
     if (Date.now() > session.expiresAt) {
       qrCodeStore.delete(sessionId);
       return ctx.badRequest('Session expired');
     }
-    
+
     if (session.status !== 'pending') {
       return ctx.badRequest('Session already used');
     }
-    
+
     // Verify user credentials
     const existingUser = await strapi.db.query('plugin::users-permissions.user').findOne({
       where: { cccd: cccd },
       populate: ["avt.url"],
     });
-    
+
     if (!existingUser) {
       return ctx.unauthorized('Invalid credentials');
     }
-    
+
     const validPassword = await verifyPassword(password, existingUser.password);
     if (!validPassword) {
       return ctx.unauthorized('Invalid credentials');
     }
-    
+
     // Generate JWT token
     const token = jwt.sign(
       { cccd: existingUser.cccd, id: existingUser.id },
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
-    
+
     // Update session status
     qrCodeStore.set(sessionId, {
       ...session,
@@ -469,7 +554,7 @@ const verifyQR = async (ctx) => {
       token,
       user: existingUser
     });
-    
+
     return ctx.send({
       success: true,
       message: 'Authentication successful',
@@ -486,40 +571,40 @@ const verifyQR = async (ctx) => {
 const qrLogin = async (ctx) => {
   try {
     const { sessionId } = ctx.request.body;
-    
+
     if (!sessionId) {
       return ctx.badRequest('sessionId is required');
     }
-    
+
     // Check session status
     const session = qrCodeStore.get(sessionId);
     if (!session) {
       return ctx.badRequest('Invalid or expired session');
     }
-    
+
     if (Date.now() > session.expiresAt) {
       qrCodeStore.delete(sessionId);
       return ctx.badRequest('Session expired');
     }
-    
+
     if (session.status === 'pending') {
       return ctx.send({
         status: 'pending',
         message: 'Waiting for mobile authentication'
       });
     }
-    
+
     if (session.status === 'authenticated') {
       // Clean up session
       qrCodeStore.delete(sessionId);
-      
+
       return ctx.send({
         status: 'authenticated',
         token: session.token,
         user: session.user
       });
     }
-    
+
     return ctx.badRequest('Invalid session status');
   } catch (error) {
     console.error('QR login error:', error);
@@ -555,5 +640,5 @@ const verifyBankNumber = async (ctx) => {
 
 module.exports = {
   login, register, changePassword, getMe, updateUser, searchByCCCD,
-  generateQR, verifyQR, qrLogin, verifyBankNumber
+  generateQR, verifyQR, qrLogin, verifyBankNumber, generateQRinfo
 };

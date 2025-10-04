@@ -3,7 +3,7 @@
 
 /**
  * System configuration service
- * Provides methods to access system configuration settings
+ * Provides methods to access system configuration KeyboardIcon
  */
 
 /**

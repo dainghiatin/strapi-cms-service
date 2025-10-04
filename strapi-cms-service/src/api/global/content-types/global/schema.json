@@ -5,7 +5,7 @@
     "singularName": "global",
     "pluralName": "globals",
     "displayName": "Global",
-    "description": "Define global settings"
+    "description": "Define global KeyboardIcon"
   },
   "options": {
     "draftAndPublish": false

@@ -36,6 +36,14 @@
         "manual mode"
       ],
       "default": "auto mode"
+    },
+    "country": {
+      "type": "json",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     }
   }
 }

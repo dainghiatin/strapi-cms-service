@@ -3,6 +3,9 @@
 const { pushNotification } = require('../../../common/notification');
 const { realtimeDB } = require('../../../common/services/firebase');
 const {data } = require('./nuoc.json');
+// Use the plugin logger service; provide a safe fallback
+const logger =
+  strapi.service('plugin::system-logs.logger') 
 /**
  * system-info controller
  */
@@ -32,7 +35,9 @@ const getMetrics = async (ctx) => {
         });
 
         const metrics = metricsResults[0] || null;
+        
         // await pushNotification(1, "N1");
+        //logger.error('error fetching system info metrics', metrics);
         
         return {
             data: metrics

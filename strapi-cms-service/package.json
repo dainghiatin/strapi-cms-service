@@ -16,6 +16,7 @@
     "upgrade:dry": "npx @strapi/upgrade latest --dry"
   },
   "dependencies": {
+    "axios": "^1.7.7",
     "@chartbrew/plugin-strapi": "^2.0.1",
     "@strapi/client": "^1.2.0",
     "@strapi/plugin-cloud": "5.11.3",

@@ -1486,6 +1486,39 @@ export interface PluginReviewWorkflowsWorkflowStage
   };
 }
 
+export interface PluginSystemLogsSystemLog extends Struct.CollectionTypeSchema {
+  collectionName: 'system_logs';
+  info: {
+    displayName: 'System Log';
+    pluralName: 'system-logs';
+    singularName: 'system-log';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    context: Schema.Attribute.JSON;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    level: Schema.Attribute.Enumeration<['info', 'warn', 'error']> &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<'info'>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'plugin::system-logs.system-log'
+    > &
+      Schema.Attribute.Private;
+    message: Schema.Attribute.Text & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    timestamp: Schema.Attribute.DateTime & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface PluginUploadFile extends Struct.CollectionTypeSchema {
   collectionName: 'files';
   info: {
@@ -1789,6 +1822,7 @@ declare module '@strapi/strapi' {
       'plugin::i18n.locale': PluginI18NLocale;
       'plugin::review-workflows.workflow': PluginReviewWorkflowsWorkflow;
       'plugin::review-workflows.workflow-stage': PluginReviewWorkflowsWorkflowStage;
+      'plugin::system-logs.system-log': PluginSystemLogsSystemLog;
       'plugin::upload.file': PluginUploadFile;
       'plugin::upload.folder': PluginUploadFolder;
       'plugin::users-permissions.permission': PluginUsersPermissionsPermission;

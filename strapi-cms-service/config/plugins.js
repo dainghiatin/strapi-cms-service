@@ -17,5 +17,9 @@ module.exports = ({ env }) => ({
         delete: {},
       },
     },
-  }
+  },
+  'system-logs': {
+    enabled: true,
+    resolve: './src/plugins/system-logs',
+  },
 });

@@ -450,6 +450,41 @@ export interface ApiAuditTrailAuditTrail extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiDocumentDocument extends Struct.CollectionTypeSchema {
+  collectionName: 'documents';
+  info: {
+    description: 'Stores documents to be signed and their metadata';
+    displayName: 'Document';
+    pluralName: 'documents';
+    singularName: 'document';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    docStatus: Schema.Attribute.String & Schema.Attribute.DefaultTo<'draft'>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::document.document'
+    > &
+      Schema.Attribute.Private;
+    metadata: Schema.Attribute.JSON;
+    pdfHash: Schema.Attribute.String;
+    pdfUrl: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    signType: Schema.Attribute.Enumeration<['CA', 'ESIGN']> &
+      Schema.Attribute.DefaultTo<'ESIGN'>;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiEventEvent extends Struct.CollectionTypeSchema {
   collectionName: 'events';
   info: {
@@ -992,12 +1027,6 @@ export interface ApiSystemConfigurationSystemConfiguration
     };
   };
   attributes: {
-    country: Schema.Attribute.JSON &
-      Schema.Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1804,6 +1833,7 @@ declare module '@strapi/strapi' {
       'admin::user': AdminUser;
       'api::additional-transaction.additional-transaction': ApiAdditionalTransactionAdditionalTransaction;
       'api::audit-trail.audit-trail': ApiAuditTrailAuditTrail;
+      'api::document.document': ApiDocumentDocument;
       'api::event.event': ApiEventEvent;
       'api::freelancer.freelancer': ApiFreelancerFreelancer;
       'api::global.global': ApiGlobalGlobal;
